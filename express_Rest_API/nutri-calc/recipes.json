@@ -1,0 +1,40 @@
+[
+    {
+      "id": 1,
+      "name": "Salmon Pasta",
+      "subtitle": "everybodys favorite",
+      "rating": "Five Stars",
+      "creator": "susan",
+      "ingredients": {
+        "peppers": "1 lb",
+        "pasta": "8 oz",
+        "olive oil": "3 tbsp",
+        "salmon": "5 oz"
+      },
+      "steps": {
+        "1": "-37.3159",
+        "2": "81.1496"
+      },
+      "date added": "01/02/22",
+      "last edit": "03/23/22"
+    },
+    {
+      "id": 2,
+      "name": "Egg and Tater Tacos",
+      "subtitle": "what's taters precious?",
+      "rating": "Five Stars",
+      "creator": "susan",
+      "ingredients": {
+        "peppers": "1 lb",
+        "pasta": "8 oz",
+        "olive oil": "3 tbsp",
+        "salmon": "5 oz"
+      },
+      "steps": {
+        "1": "-37.3159",
+        "2": "81.1496"
+      },
+      "date added": "01/02/22",
+      "last edit": "03/23/22"
+    }
+]
