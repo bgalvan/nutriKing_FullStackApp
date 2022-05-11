@@ -1,3 +1,4 @@
+const { json } = require("express");
 var express = require("express");
 var router = express.Router();
 var fooddata = require("../recipes.json");
@@ -26,6 +27,10 @@ router.get("/vegetables", function (req, res) {
 
 router.get("/vegdata", function (req, res) {
   res.json(fooddata);
+});
+
+router.post("/recipes", function (req, res) {
+  console.log("req body: ", req.body);
 });
 
 module.exports = router;
