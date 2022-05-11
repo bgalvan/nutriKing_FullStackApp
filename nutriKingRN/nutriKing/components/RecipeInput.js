@@ -117,7 +117,7 @@ function RecipeInput(props) {
               selectedValue={selectedUnit}
               style={{ height: 50, width: 150 }}
               onValueChange={(itemValue, itemIndex) =>
-                setSelectedValue(itemValue)
+                setSelectedUnit(itemValue)
               }
             >
               <Picker.Item label="lb" value="lb" />

@@ -31,6 +31,40 @@ router.get("/vegdata", function (req, res) {
 
 router.post("/recipes", function (req, res) {
   console.log("req body: ", req.body);
+  var query = "";
+  for (var i = 0; i < req.body.ingredients.length; i++) {
+    var obj = req.body.ingredients[i];
+    console.log("ingredient " + i + " " + req.body.ingredients[i].name);
+    query +=
+      req.body.ingredients[i].qty +
+      " " +
+      req.body.ingredients[i].unit +
+      " " +
+      req.body.ingredients[i].name +
+      " ";
+  }
+  console.log("query", query);
+
+  const request = require("request");
+  request.get(
+    {
+      url: "https://api.calorieninjas.com/v1/nutrition?query=" + query,
+      headers: {
+        "X-Api-Key": "66bZo5YIpvKhFpDZBZGEXg==DFUYD4LespAwZPwk",
+      },
+    },
+    function (error, response, body) {
+      if (error) return console.error("Request failed:", error);
+      else if (response.statusCode != 200)
+        return console.error(
+          "Error:",
+          response.statusCode,
+          body.toString("utf8")
+        );
+      else console.log(body);
+      console.log("done");
+    }
+  );
 });
 
 module.exports = router;
