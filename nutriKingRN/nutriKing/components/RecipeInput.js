@@ -7,6 +7,7 @@ import {
   Modal,
   Image,
   FlatList,
+  Picker,
 } from "react-native";
 
 import RecipeItem from "./Item";
@@ -16,6 +17,7 @@ function RecipeInput(props) {
   const [enteredIngredientText, setEnteredIngredientText] = useState("");
   const [enteredQtyText, setEnteredQtyText] = useState("");
   const [ingredients, setIngredients] = useState([]);
+  const [selectedUnit, setSelectedUnit] = useState("lb");
 
   function titleInputHandler(enteredText) {
     setEnteredTitleText(enteredText);
@@ -35,6 +37,7 @@ function RecipeInput(props) {
       {
         name: enteredIngredientText,
         qty: enteredQtyText,
+        unit: selectedUnit,
         id: Math.random().toString(),
       },
     ]);
@@ -69,7 +72,7 @@ function RecipeInput(props) {
         />
         <TextInput
           style={styles.textInput}
-          placeholder="Your course Recipe!"
+          placeholder="Your Recipe!"
           onChangeText={titleInputHandler}
           value={enteredTitleText}
         />
@@ -108,6 +111,25 @@ function RecipeInput(props) {
               value={enteredQtyText}
             />
           </View>
+
+          <View style={styles.unitPicker}>
+            <Picker
+              selectedValue={selectedUnit}
+              style={{ height: 50, width: 150 }}
+              onValueChange={(itemValue, itemIndex) =>
+                setSelectedValue(itemValue)
+              }
+            >
+              <Picker.Item label="lb" value="lb" />
+              <Picker.Item label="g" value="g" />
+              <Picker.Item label="oz" value="oz" />
+              <Picker.Item label="cup" value="cup" />
+              <Picker.Item label="tbsp" value="tbsp" />
+              <Picker.Item label="tsp" value="tsp" />
+              <Picker.Item label="pc" value="pc" />
+            </Picker>
+          </View>
+
           <View style={styles.addIngredientButton}>
             <View style={styles.button}>
               <Button
@@ -171,11 +193,15 @@ const styles = StyleSheet.create({
   ingredientsContainer: {
     // flex: 1,
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     alignItems: "center",
     width: "100%",
   },
   qtyInput: {
+    flex: 2,
+    margin: 16,
+  },
+  unitPicker: {
     flex: 2,
     margin: 16,
   },
