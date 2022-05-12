@@ -2,6 +2,7 @@ const { json } = require("express");
 var express = require("express");
 var router = express.Router();
 var fooddata = require("../recipes.json");
+var recipedata = require("../testdb.json");
 
 console.log(fooddata);
 
@@ -27,6 +28,12 @@ router.get("/vegetables", function (req, res) {
 
 router.get("/vegdata", function (req, res) {
   res.json(fooddata);
+});
+
+router.get("/recipes", function (req, res) {
+  res.header("Access-Control-Expose-Headers", "Content-Range");
+  res.header("Content-Range", "tasks 0-4/20");
+  res.json(recipedata);
 });
 
 router.post("/recipes", function (req, res) {
