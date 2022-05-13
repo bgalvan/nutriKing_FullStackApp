@@ -30,11 +30,11 @@ router.get("/vegdata", function (req, res) {
   res.json(fooddata);
 });
 
-router.get("/recipes", function (req, res) {
-  res.header("Access-Control-Expose-Headers", "Content-Range");
-  res.header("Content-Range", "tasks 0-4/20");
-  res.json(recipedata);
-});
+// router.get("/recipes", function (req, res) {
+//   res.header("Access-Control-Expose-Headers", "Content-Range");
+//   res.header("Content-Range", "tasks 0-4/20");
+//   res.json(recipedata);
+// });
 
 router.post("/recipes", function (req, res) {
   console.log("req body: ", req.body);

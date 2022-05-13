@@ -1,12 +1,18 @@
 import { useState } from "react";
 import { StyleSheet, View, FlatList, Button } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { useFonts } from "expo-font";
+import AppLoading from "expo-app-loading";
 
 import Item from "./components/Item";
 import RecipeInput from "./components/RecipeInput";
 import { storeRecipe } from "./util/http";
 
 export default function App() {
+  let [fontsLoaded] = useFonts({
+    "Nunito-Light": require("./assets/fonts/Nunito-Light.ttf"),
+  });
+
   const [modalIsVisible, setModalIsVisible] = useState(false);
   const [Recipes, setRecipes] = useState([]);
 
@@ -34,6 +40,10 @@ export default function App() {
     setRecipes((currentRecipes) => {
       return currentRecipes.filter((Recipe) => Recipe.id !== id);
     });
+  }
+
+  if (!fontsLoaded) {
+    return <AppLoading />;
   }
 
   return (
@@ -77,6 +87,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 50,
     paddingHorizontal: 16,
+    color: "#333333",
   },
   RecipesContainer: {
     flex: 5,

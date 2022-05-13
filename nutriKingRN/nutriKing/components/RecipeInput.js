@@ -7,8 +7,8 @@ import {
   Modal,
   Image,
   FlatList,
-  Picker,
 } from "react-native";
+import { Picker } from "@react-native-picker/picker";
 
 import RecipeItem from "./Item";
 
