@@ -1,20 +1,32 @@
 import { useState } from "react";
-import { StyleSheet, View, FlatList, Button } from "react-native";
+import { StyleSheet, View, FlatList, Button, Text } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { useFonts } from "expo-font";
 import AppLoading from "expo-app-loading";
+import useFonts from "./hooks/useFonts";
 
 import Item from "./components/Item";
 import RecipeInput from "./components/RecipeInput";
 import { storeRecipe } from "./util/http";
 
 export default function App() {
-  let [fontsLoaded] = useFonts({
-    "Nunito-Light": require("./assets/fonts/Nunito-Light.ttf"),
-  });
+  const [IsReady, SetIsReady] = useState(false);
 
   const [modalIsVisible, setModalIsVisible] = useState(false);
   const [Recipes, setRecipes] = useState([]);
+
+  const LoadFonts = async () => {
+    await useFonts();
+  };
+
+  if (!IsReady) {
+    return (
+      <AppLoading
+        startAsync={LoadFonts}
+        onFinish={() => SetIsReady(true)}
+        onError={() => {}}
+      />
+    );
+  }
 
   function startAddRecipeHandler() {
     setModalIsVisible(true);
@@ -42,17 +54,14 @@ export default function App() {
     });
   }
 
-  if (!fontsLoaded) {
-    return <AppLoading />;
-  }
-
   return (
     <>
       <StatusBar style="light" />
       <View style={styles.appContainer}>
+        <Text style={styles.header}>Recipes</Text>
         <Button
           title="Add New Recipe"
-          color="#49b1a3"
+          color="#3a3a3a"
           onPress={startAddRecipeHandler}
         />
         <RecipeInput
@@ -88,8 +97,14 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     paddingHorizontal: 16,
     color: "#333333",
+    fontFamily: "Nunito-Light",
   },
   RecipesContainer: {
     flex: 5,
+  },
+  header: {
+    fontSize: 24,
+    fontFamily: "Nunito-Light",
+    paddingBottom: 12,
   },
 });

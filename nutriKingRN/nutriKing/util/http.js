@@ -2,7 +2,7 @@ import axios from "axios";
 
 export function storeRecipe(recipeData) {
   axios
-    .post("http://localhost:3001/recipes", recipeData)
+    .post("http://192.168.0.20:3001/recipes", recipeData)
     .then((res) => {
       console.log(res);
       console.log(res.data);

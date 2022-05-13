@@ -1,4 +1,5 @@
 import { StyleSheet, View, Text, Pressable } from "react-native";
+// import AppText from "./AppText";
 
 function Item(props) {
   return (
@@ -20,13 +21,14 @@ const styles = StyleSheet.create({
   Item: {
     margin: 8,
     borderRadius: 6,
-    backgroundColor: "#9b2f27",
+    backgroundColor: "#dadada",
   },
   pressedItem: {
     opacity: 0.5,
   },
   Text: {
-    color: "white",
+    color: "#333333",
     padding: 8,
+    fontFamily: "Nunito-Light",
   },
 });

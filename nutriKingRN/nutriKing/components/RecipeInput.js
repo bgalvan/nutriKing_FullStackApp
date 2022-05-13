@@ -174,13 +174,14 @@ const styles = StyleSheet.create({
   },
   textInput: {
     borderWidth: 1,
-    borderColor: "#e4d0ff",
-    backgroundColor: "#e4d0ff",
+    borderColor: "#888888",
+    backgroundColor: "#ffffff",
     color: "#120438",
     borderRadius: 6,
     width: "100%",
     padding: 16,
     margin: 12,
+    fontFamily: "Nunito-Light",
   },
   buttonContainer: {
     flexDirection: "row",
