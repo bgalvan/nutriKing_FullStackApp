@@ -83,7 +83,13 @@ function RecipeInput(props) {
             renderItem={(itemData) => {
               return (
                 <RecipeItem
-                  text={itemData.item.qty + " " + itemData.item.name}
+                  text={
+                    itemData.item.qty +
+                    " " +
+                    itemData.item.unit +
+                    " " +
+                    itemData.item.name
+                  }
                   id={itemData.item.id}
                   onDeleteItem={deleteRecipeHandler}
                 />
@@ -98,7 +104,7 @@ function RecipeInput(props) {
           <View style={styles.ingredientInput}>
             <TextInput
               style={styles.textInput}
-              placeholder="Add your ingredients!"
+              placeholder="ingredient"
               onChangeText={ingredientInputHandler}
               value={enteredIngredientText}
             />
@@ -106,7 +112,7 @@ function RecipeInput(props) {
           <View style={styles.qtyInput}>
             <TextInput
               style={styles.textInput}
-              placeholder="Add your quantity"
+              placeholder="qty"
               onChangeText={qtyInputHandler}
               value={enteredQtyText}
             />
@@ -129,15 +135,14 @@ function RecipeInput(props) {
               <Picker.Item label="pc" value="pc" />
             </Picker>
           </View>
-
-          <View style={styles.addIngredientButton}>
-            <View style={styles.button}>
-              <Button
-                title="Add Ingredient"
-                onPress={addIngredientHandler}
-                color="#c98811"
-              />
-            </View>
+        </View>
+        <View style={styles.addIngredientButton}>
+          <View style={styles.button}>
+            <Button
+              title="Add Ingredient"
+              onPress={addIngredientHandler}
+              color="#c98811"
+            />
           </View>
         </View>
         <View style={styles.buttonContainer}>
@@ -162,7 +167,7 @@ export default RecipeInput;
 const styles = StyleSheet.create({
   inputContainer: {
     flex: 1,
-    justifyContent: "center",
+    // justifyContent: "center",
     alignItems: "center",
     padding: 16,
     backgroundColor: "#1a2e34",
@@ -177,41 +182,48 @@ const styles = StyleSheet.create({
     borderColor: "#888888",
     backgroundColor: "#ffffff",
     color: "#120438",
-    borderRadius: 6,
+    borderRadius: 9,
     width: "100%",
-    padding: 16,
-    margin: 12,
+    padding: 12,
+    margin: 9,
     fontFamily: "Nunito-Light",
   },
   buttonContainer: {
     flexDirection: "row",
-    margin: 16,
+    margin: 8,
   },
   button: {
     width: 100,
-    marginHorizontal: 8,
+    marginHorizontal: 6,
   },
   ingredientsContainer: {
     // flex: 1,
     flexDirection: "row",
-    justifyContent: "center",
+    // justifyContent: "flex-start",
     alignItems: "center",
     width: "100%",
   },
   qtyInput: {
     flex: 2,
-    margin: 16,
+    margin: 8,
   },
   unitPicker: {
-    flex: 2,
+    flex: 1,
     margin: 16,
+    backgroundColor: "#ffffff",
+    color: "#120438",
+    borderWidth: 1,
+    borderColor: "#888888",
+    backgroundColor: "#ffffff",
+    borderRadius: 9,
+    fontFamily: "Nunito-Light",
   },
   ingredientInput: {
-    flex: 4,
+    flex: 3,
     margin: 16,
   },
   addIngredientButton: {
-    flex: 1,
-    margin: 16,
+    flex: 3,
+    margin: 1,
   },
 });

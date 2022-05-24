@@ -7,11 +7,13 @@ import useFonts from "./hooks/useFonts";
 import Item from "./components/Item";
 import RecipeInput from "./components/RecipeInput";
 import { storeRecipe } from "./util/http";
+import { ViewRecipe } from "./components/ViewRecipe";
 
 export default function App() {
   const [IsReady, SetIsReady] = useState(false);
 
   const [modalIsVisible, setModalIsVisible] = useState(false);
+  const [viewModalIsVisible, setViewModalIsVisible] = useState(false);
   const [Recipes, setRecipes] = useState([]);
 
   const LoadFonts = async () => {
@@ -54,6 +56,14 @@ export default function App() {
     });
   }
 
+  function startViewRecipeHandler() {
+    setViewModalIsVisible(true);
+  }
+
+  function endViewRecipeHandler() {
+    setViewModalIsVisible(false);
+  }
+
   return (
     <>
       <StatusBar style="light" />
@@ -69,6 +79,10 @@ export default function App() {
           onAddRecipe={addRecipeHandler}
           onCancel={endAddRecipeHandler}
         />
+        <ViewRecipe
+          visible={viewModalIsVisible}
+          onCancel={endViewRecipeHandler}
+        />
         <View style={styles.RecipesContainer}>
           <FlatList
             data={Recipes}
@@ -77,7 +91,8 @@ export default function App() {
                 <Item
                   text={itemData.item.text}
                   id={itemData.item.id}
-                  onDeleteItem={deleteRecipeHandler}
+                  // onDeleteItem={deleteRecipeHandler}
+                  onAccessItem={startViewRecipeHandler}
                 />
               );
             }}
@@ -103,7 +118,7 @@ const styles = StyleSheet.create({
     flex: 5,
   },
   header: {
-    fontSize: 24,
+    fontSize: 28,
     fontFamily: "Nunito-Light",
     paddingBottom: 12,
   },

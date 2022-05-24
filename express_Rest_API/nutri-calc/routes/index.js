@@ -36,6 +36,11 @@ router.get("/vegdata", function (req, res) {
 //   res.json(recipedata);
 // });
 
+router.get("/ingredient", function (req, res) {
+  console.log(req.body);
+});
+
+//receives a recipe oject and get a nutrition info for all ingredients in recipe
 router.post("/recipes", function (req, res) {
   console.log("req body: ", req.body);
   var query = "";

@@ -6,7 +6,8 @@ function Item(props) {
     <View style={styles.Item}>
       <Pressable
         android_ripple={{ color: "#dddddd" }}
-        onPress={props.onDeleteItem.bind(this, props.id)}
+        // onPress={props.onDeleteItem.bind(this, props.id)}
+        onPress={props.onAccessItem}
         style={({ pressed }) => pressed && styles.pressedItem}
       >
         <Text style={styles.Text}>{props.text}</Text>
