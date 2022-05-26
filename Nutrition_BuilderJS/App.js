@@ -13,20 +13,7 @@ const mymain = async () => {
 };
 mymain();
 
-export const getNutrition = async item => {
-  try {
-    const response = await axios.get(`http://localhost:3001/ingredient`, item)
-    await axios
-    .get("http://localhost:3001/ingredient", item)
-    .then((res) => {
-      console.log(res);
-      console.log(res.data);
-    })
-    .catch((error) => console.log(error));
-    const nutrition = response.data;
-    console.log("nutrition")
-  }
-};
+
 
 export const addTodoItem = async todo => {
   try {
@@ -89,6 +76,21 @@ const getData = async (recipe) => {
   }
 };
 
+export const getNutrition = async item => {
+  try {
+    const response = await axios.get(`http://localhost:3001/ingredient`, item)
+    await axios
+    .get("http://localhost:3001/ingredient", item)
+    .then((res) => {
+      console.log(res);
+      console.log(res.data);
+    })
+    .catch((error) => console.log(error));
+    const nutrition = response.data;
+    console.log("nutrition")
+  }
+};
+
 //form for recipe builder
 const recipeForm = document.getElementById("form1");
 recipeForm.addEventListener("submit", async (event) => {
@@ -108,47 +110,4 @@ const submitRecipe = (recipe) => {
   //send to api
   //store recipe in REST server(until db is setup)
   ingredientArray = [];
-};
-
-//practice tutorial code
-const BASE_URL = "https://jsonplaceholder.typicode.com";
-
-
-const createTodoElement = (item) => {
-  const todoElement = document.createElement("li");
-
-  todoElement.appendChild(document.createTextNode(item.title));
-
-  return todoElement;
-};
-
-// const updateTodoList = (todoItems) => {
-//   const todoList = document.querySelector("ul");
-
-//   if (Array.isArray(todoItems) && todoItems.length > 0) {
-//     todoItems.map((todoItem) => {
-//       todoList.appendChild(createTodoElement(todoItem));
-//     });
-//   } else if (todoItems) {
-//     todoList.appendChild(createTodoElement(todoItems));
-//   }
-// };
-
-// const main = async () => {
-//   updateTodoList(await getTodoItems());
-// };
-
-// main();
-
-export const addTodoItem = async (todo) => {
-  try {
-    const response = await axios.post(`${BASE_URL}/todos`, todo);
-    const newTodoItem = response.data;
-
-    console.log(`Added a new Todo!`, newTodoItem);
-
-    return newTodoItem;
-  } catch (errors) {
-    console.error(errors);
-  }
 };
