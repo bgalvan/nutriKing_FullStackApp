@@ -36,7 +36,7 @@ router.get("/vegdata", function (req, res) {
 //   res.json(recipedata);
 // });
 
-router.get("/ingredient", function (req, res) {
+router.get("/ingredients", function (req, res) {
   console.log(req.body);
 });
 
@@ -77,6 +77,8 @@ router.post("/recipes", function (req, res) {
       console.log("done");
     }
   );
+  res.header("Access-Control-Allow-Origin", "*");
+  res.send("Hello World");
 });
 
 module.exports = router;

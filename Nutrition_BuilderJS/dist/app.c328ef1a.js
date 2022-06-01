@@ -2697,9 +2697,11 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 //my code
-var RESTAPI_URL = "https://jsonplaceholder.typicode.com";
-var NINJA_URL = "66bZo5YIpvKhFpDZBZGEXg==DFUYD4LespAwZPwk";
-var ingredientArray = []; //function that updates
+var RESTAPI_URL = "https://localhost/3001"; // const NINJA_URL = "66bZo5YIpvKhFpDZBZGEXg==DFUYD4LespAwZPwk";
+
+var ingredientArray = []; //consider having nutrition data stored locally so you don't call api every time we add or remove ingredient
+// var nutrition = [];
+//function that updates
 
 var mymain = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
@@ -2707,10 +2709,6 @@ var mymain = /*#__PURE__*/function () {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            _context.next = 2;
-            return updateNutrition();
-
-          case 2:
           case "end":
             return _context.stop();
         }
@@ -2725,23 +2723,42 @@ var mymain = /*#__PURE__*/function () {
 
 mymain();
 
-var updateNutrition = /*#__PURE__*/function () {
-  var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+var addTodoItem = /*#__PURE__*/function () {
+  var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(todo) {
+    var response, newTodoItem;
     return _regeneratorRuntime().wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
+            _context2.prev = 0;
+            _context2.next = 3;
+            return _axios.default.post("".concat(BASE_URL, "/todos"), todo);
+
+          case 3:
+            response = _context2.sent;
+            newTodoItem = response.data;
+            console.log("Added a new Todo!", newTodoItem);
+            return _context2.abrupt("return", newTodoItem);
+
+          case 9:
+            _context2.prev = 9;
+            _context2.t0 = _context2["catch"](0);
+            console.error(_context2.t0);
+
+          case 12:
           case "end":
             return _context2.stop();
         }
       }
-    }, _callee2);
+    }, _callee2, null, [[0, 9]]);
   }));
 
-  return function updateNutrition() {
+  return function addTodoItem(_x) {
     return _ref2.apply(this, arguments);
   };
 }();
+
+exports.addTodoItem = addTodoItem;
 
 var createIngredientElement = function createIngredientElement(item) {
   var ingredientElement = document.createElement("li");
@@ -2750,7 +2767,7 @@ var createIngredientElement = function createIngredientElement(item) {
 }; //initalize the ingredient list object
 
 
-var ingredientList = document.getElementById("ingredientList"); //initialize the recipe list
+var ingredientList = document.getElementById("ingredientList"); //initialize the recipe list displayed in html
 
 var recipeList = document.getElementById("recipeList"); //add ingredients to display and to array
 
@@ -2776,7 +2793,7 @@ ingredientForm.addEventListener("submit", /*#__PURE__*/function () {
             };
             console.log("name: ", name);
             console.log("qty: ", qty);
-            addIngredient(ingredient);
+            addIngredient(ingredient); // getData(ingredientArray);
 
           case 7:
           case "end":
@@ -2786,54 +2803,18 @@ ingredientForm.addEventListener("submit", /*#__PURE__*/function () {
     }, _callee3);
   }));
 
-  return function (_x) {
+  return function (_x2) {
     return _ref3.apply(this, arguments);
   };
-}()); //get data from calorieninja api
-
-var getData = /*#__PURE__*/function () {
-  var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(recipe) {
-    var response, nutrition;
-    return _regeneratorRuntime().wrap(function _callee4$(_context4) {
-      while (1) {
-        switch (_context4.prev = _context4.next) {
-          case 0:
-            _context4.prev = 0;
-            _context4.next = 3;
-            return _axios.default.post("${BASE_URL}/recipes", recipe);
-
-          case 3:
-            response = _context4.sent;
-            nutrition = response.data;
-            console.log("POST: nutrition response", nutrition);
-            return _context4.abrupt("return", nutrition);
-
-          case 9:
-            _context4.prev = 9;
-            _context4.t0 = _context4["catch"](0);
-            console.log(_context4.t0);
-
-          case 12:
-          case "end":
-            return _context4.stop();
-        }
-      }
-    }, _callee4, null, [[0, 9]]);
-  }));
-
-  return function getData(_x2) {
-    return _ref4.apply(this, arguments);
-  };
-}(); //form for recipe builder
-
+}()); //form for recipe builder
 
 var recipeForm = document.getElementById("form1");
 recipeForm.addEventListener("submit", /*#__PURE__*/function () {
-  var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(event) {
+  var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(event) {
     var name, recipe;
-    return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+    return _regeneratorRuntime().wrap(function _callee4$(_context4) {
       while (1) {
-        switch (_context5.prev = _context5.next) {
+        switch (_context4.prev = _context4.next) {
           case 0:
             event.preventDefault();
             name = document.querySelector("#name").value;
@@ -2845,14 +2826,14 @@ recipeForm.addEventListener("submit", /*#__PURE__*/function () {
 
           case 4:
           case "end":
-            return _context5.stop();
+            return _context4.stop();
         }
       }
-    }, _callee5);
+    }, _callee4);
   }));
 
   return function (_x3) {
-    return _ref5.apply(this, arguments);
+    return _ref4.apply(this, arguments);
   };
 }());
 
@@ -2863,102 +2844,56 @@ var submitRecipe = function submitRecipe(recipe) {
   //store recipe in REST server(until db is setup)
 
   ingredientArray = [];
-}; //practice tutorial code
+  getNutrition(recipe);
+}; //HTTP
+//get data from calorieninja api for recipe
 
 
-var BASE_URL = "https://jsonplaceholder.typicode.com";
-
-var getTodoItems = /*#__PURE__*/function () {
-  var _ref6 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
-    var response, todoItems;
-    return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+var getData = /*#__PURE__*/function () {
+  var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(ingredients) {
+    var response, nutrition;
+    return _regeneratorRuntime().wrap(function _callee5$(_context5) {
       while (1) {
-        switch (_context6.prev = _context6.next) {
+        switch (_context5.prev = _context5.next) {
           case 0:
-            _context6.prev = 0;
-            _context6.next = 3;
-            return _axios.default.get("".concat(BASE_URL, "/todos?_limit=5"));
+            _context5.prev = 0;
+            _context5.next = 3;
+            return _axios.default.get("http://localhost:3001/recipes", ingredients, {
+              crossDomain: true
+            });
 
           case 3:
-            response = _context6.sent;
-            todoItems = response.data;
-            console.log("GET: Here's the list of todos", todoItems);
-            return _context6.abrupt("return", todoItems);
+            response = _context5.sent;
+            nutrition = response.data; // console.log("POST: nutrition response", nutrition);
 
-          case 9:
-            _context6.prev = 9;
-            _context6.t0 = _context6["catch"](0);
-            console.error(_context6.t0);
+            return _context5.abrupt("return", nutrition);
 
-          case 12:
+          case 8:
+            _context5.prev = 8;
+            _context5.t0 = _context5["catch"](0);
+            console.log(_context5.t0);
+
+          case 11:
           case "end":
-            return _context6.stop();
+            return _context5.stop();
         }
       }
-    }, _callee6, null, [[0, 9]]);
+    }, _callee5, null, [[0, 8]]);
   }));
 
-  return function getTodoItems() {
-    return _ref6.apply(this, arguments);
+  return function getData(_x4) {
+    return _ref5.apply(this, arguments);
   };
 }();
 
-var createTodoElement = function createTodoElement(item) {
-  var todoElement = document.createElement("li");
-  todoElement.appendChild(document.createTextNode(item.title));
-  return todoElement;
-}; // const updateTodoList = (todoItems) => {
-//   const todoList = document.querySelector("ul");
-//   if (Array.isArray(todoItems) && todoItems.length > 0) {
-//     todoItems.map((todoItem) => {
-//       todoList.appendChild(createTodoElement(todoItem));
-//     });
-//   } else if (todoItems) {
-//     todoList.appendChild(createTodoElement(todoItems));
-//   }
-// };
-// const main = async () => {
-//   updateTodoList(await getTodoItems());
-// };
-// main();
-
-
-var addTodoItem = /*#__PURE__*/function () {
-  var _ref7 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7(todo) {
-    var response, newTodoItem;
-    return _regeneratorRuntime().wrap(function _callee7$(_context7) {
-      while (1) {
-        switch (_context7.prev = _context7.next) {
-          case 0:
-            _context7.prev = 0;
-            _context7.next = 3;
-            return _axios.default.post("".concat(BASE_URL, "/todos"), todo);
-
-          case 3:
-            response = _context7.sent;
-            newTodoItem = response.data;
-            console.log("Added a new Todo!", newTodoItem);
-            return _context7.abrupt("return", newTodoItem);
-
-          case 9:
-            _context7.prev = 9;
-            _context7.t0 = _context7["catch"](0);
-            console.error(_context7.t0);
-
-          case 12:
-          case "end":
-            return _context7.stop();
-        }
-      }
-    }, _callee7, null, [[0, 9]]);
-  }));
-
-  return function addTodoItem(_x4) {
-    return _ref7.apply(this, arguments);
-  };
-}();
-
-exports.addTodoItem = addTodoItem;
+function getNutrition(recipeData) {
+  _axios.default.post("http://nutriclient:3001/recipes", recipeData).then(function (res) {
+    console.log(res);
+    console.log(res.data);
+  }).catch(function (error) {
+    return console.log(error);
+  });
+}
 },{"regenerator-runtime/runtime":"node_modules/regenerator-runtime/runtime.js","axios":"node_modules/axios/index.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -2987,7 +2922,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60528" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49243" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

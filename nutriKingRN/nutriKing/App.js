@@ -79,10 +79,6 @@ export default function App() {
           onAddRecipe={addRecipeHandler}
           onCancel={endAddRecipeHandler}
         />
-        <ViewRecipe
-          visible={viewModalIsVisible}
-          onCancel={endViewRecipeHandler}
-        />
         <View style={styles.RecipesContainer}>
           <FlatList
             data={Recipes}

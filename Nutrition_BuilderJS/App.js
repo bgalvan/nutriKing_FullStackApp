@@ -2,10 +2,12 @@ import "regenerator-runtime/runtime";
 import axios from "axios";
 
 //my code
-const RESTAPI_URL = "https://jsonplaceholder.typicode.com";
-const NINJA_URL = "66bZo5YIpvKhFpDZBZGEXg==DFUYD4LespAwZPwk";
+const RESTAPI_URL = "https://localhost/3001";
+// const NINJA_URL = "66bZo5YIpvKhFpDZBZGEXg==DFUYD4LespAwZPwk";
 
 var ingredientArray = [];
+//consider having nutrition data stored locally so you don't call api every time we add or remove ingredient
+// var nutrition = [];
 
 //function that updates
 const mymain = async () => {
@@ -13,9 +15,7 @@ const mymain = async () => {
 };
 mymain();
 
-
-
-export const addTodoItem = async todo => {
+export const addTodoItem = async (todo) => {
   try {
     const response = await axios.post(`${BASE_URL}/todos`, todo);
     const newTodoItem = response.data;
@@ -38,7 +38,7 @@ const createIngredientElement = (item) => {
 
 //initalize the ingredient list object
 const ingredientList = document.getElementById("ingredientList");
-//initialize the recipe list
+//initialize the recipe list displayed in html
 const recipeList = document.getElementById("recipeList");
 
 //add ingredients to display and to array
@@ -59,37 +59,8 @@ ingredientForm.addEventListener("submit", async (event) => {
   console.log("name: ", name);
   console.log("qty: ", qty);
   addIngredient(ingredient);
+  // getData(ingredientArray);
 });
-
-//get data from calorieninja api
-const getData = async (recipe) => {
-  try {
-    const response = await axios.post("${BASE_URL}/recipes", recipe);
-
-    const nutrition = response.data;
-
-    console.log("POST: nutrition response", nutrition);
-
-    return nutrition;
-  } catch (errors) {
-    console.log(errors);
-  }
-};
-
-export const getNutrition = async item => {
-  try {
-    const response = await axios.get(`http://localhost:3001/ingredient`, item)
-    await axios
-    .get("http://localhost:3001/ingredient", item)
-    .then((res) => {
-      console.log(res);
-      console.log(res.data);
-    })
-    .catch((error) => console.log(error));
-    const nutrition = response.data;
-    console.log("nutrition")
-  }
-};
 
 //form for recipe builder
 const recipeForm = document.getElementById("form1");
@@ -110,4 +81,36 @@ const submitRecipe = (recipe) => {
   //send to api
   //store recipe in REST server(until db is setup)
   ingredientArray = [];
+  getNutrition(recipe);
 };
+
+//HTTP
+
+//get data from calorieninja api for recipe
+const getData = async (ingredients) => {
+  try {
+    const response = await axios.get(
+      "http://localhost:3001/recipes",
+      ingredients,
+      { crossDomain: true }
+    );
+
+    const nutrition = response.data;
+
+    // console.log("POST: nutrition response", nutrition);
+
+    return nutrition;
+  } catch (errors) {
+    console.log(errors);
+  }
+};
+
+function getNutrition(recipeData) {
+  axios
+    .post("http://nutriclient:3001/recipes", recipeData)
+    .then((res) => {
+      console.log(res);
+      console.log(res.data);
+    })
+    .catch((error) => console.log(error));
+}
