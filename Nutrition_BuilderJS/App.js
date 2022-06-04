@@ -6,6 +6,7 @@ const RESTAPI_URL = "https://localhost/3001";
 // const NINJA_URL = "66bZo5YIpvKhFpDZBZGEXg==DFUYD4LespAwZPwk";
 
 var ingredientArray = [];
+var nutrition = [];
 //consider having nutrition data stored locally so you don't call api every time we add or remove ingredient
 // var nutrition = [];
 
@@ -14,19 +15,6 @@ const mymain = async () => {
   // updateIngredients(await getIngredients());
 };
 mymain();
-
-export const addTodoItem = async (todo) => {
-  try {
-    const response = await axios.post(`${BASE_URL}/todos`, todo);
-    const newTodoItem = response.data;
-
-    console.log(`Added a new Todo!`, newTodoItem);
-
-    return newTodoItem;
-  } catch (errors) {
-    console.error(errors);
-  }
-};
 
 const createIngredientElement = (item) => {
   const ingredientElement = document.createElement("li");
@@ -41,10 +29,15 @@ const ingredientList = document.getElementById("ingredientList");
 //initialize the recipe list displayed in html
 const recipeList = document.getElementById("recipeList");
 
+const nutritionInfo = document.getElementById("nutrition");
+
 //add ingredients to display and to array
-const addIngredient = (ingredient) => {
+const addIngredient = async (ingredient) => {
   ingredientList.appendChild(createIngredientElement(ingredient));
   ingredientArray.push(ingredient);
+  getIngredientNutrition(ingredient);
+  // displayNutrition(ingredient);
+  // nutritionInfo.appendChild(document.createTextNode(nutrition));
 };
 
 const ingredientForm = document.getElementById("form2");
@@ -52,14 +45,18 @@ ingredientForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const name = document.querySelector("#ingredient").value;
   const qty = document.querySelector("#qty").value;
+  const unit = document.querySelector("#unit").value;
   const ingredient = {
     name: name,
     qty: qty,
+    unit: unit,
   };
   console.log("name: ", name);
   console.log("qty: ", qty);
   addIngredient(ingredient);
   // getData(ingredientArray);
+  document.querySelector("#ingredient").value = "";
+  document.querySelector("#qty").value = "";
 });
 
 //form for recipe builder
@@ -74,6 +71,14 @@ recipeForm.addEventListener("submit", async (event) => {
   submitRecipe(recipe);
 });
 
+function updateDisplayNutrition() {
+  // console.log("nutrition: ", nutrition.items[0]);
+  var message = "";
+  console.log("nutrition: ", nutrition);
+  nutritionInfo.appendChild(document.createTextNode(nutrition));
+  console.log("item 1: ", nutrition[0].items);
+}
+
 const submitRecipe = (recipe) => {
   const recipeElement = document.createElement("li");
   recipeElement.appendChild(document.createTextNode(recipe.name));
@@ -81,8 +86,18 @@ const submitRecipe = (recipe) => {
   //send to api
   //store recipe in REST server(until db is setup)
   ingredientArray = [];
-  getNutrition(recipe);
+  getRecipeNutrition(recipe);
 };
+
+// async function updateNutrition(ingredient) {
+//   try {
+//     var data = getIngredientNutrition(ingredient);
+//   } catch (errors) {
+//     console.log(errors);
+//   }
+//   console.log("data: ", data);
+//   nutritionInfo.appendChild(document.createTextNode(nutrition));
+// }
 
 //HTTP
 
@@ -105,7 +120,7 @@ const getData = async (ingredients) => {
   }
 };
 
-function getNutrition(recipeData) {
+function getRecipeNutrition(recipeData) {
   axios
     .post("http://nutriclient:3001/recipes", recipeData)
     .then((res) => {
@@ -114,3 +129,30 @@ function getNutrition(recipeData) {
     })
     .catch((error) => console.log(error));
 }
+
+function getIngredientNutrition(recipeData) {
+  axios
+    .post("http://nutriclient:3001/ingredient", recipeData)
+    .then((res) => {
+      console.log(res);
+      console.log(res.data);
+      nutrition.push(res.data);
+      // console.log("nutrition", nutrition);
+      // return res.data;
+      updateDisplayNutrition();
+    })
+    .catch((error) => console.log(error));
+}
+
+export const addTodoItem = async (todo) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/todos`, todo);
+    const newTodoItem = response.data;
+
+    console.log(`Added a new Todo!`, newTodoItem);
+
+    return newTodoItem;
+  } catch (errors) {
+    console.error(errors);
+  }
+};

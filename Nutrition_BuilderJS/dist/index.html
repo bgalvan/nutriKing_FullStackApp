@@ -7,36 +7,26 @@
     <title>Document</title>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
-    <script>var submitted = function submitted() {
-  console.log("hello world");
-};</script>
-
-    <style>@import url("https://fonts.googleapis.com/css2?family=Open+Sans&display=swap");
-      p {
-        font-family: "Open Sans", sans-serif;
-      }
-      h1 {
-        font-family: "Open Sans", sans-serif;
-      }
-      h2 {
-        font-family: "Open Sans", sans-serif;
-      }</style>
-  </head>
+    <link rel="stylesheet" href="/app.ae05fb60.css">
+  <script src="/app.ae05fb60.js"></script></head>
 
   <body>
-    <div>
-      <h1>Nutrition Builder</h1>
-    </div>
-    <div>
+      <!-- <div class="div-1"><img src="./assets/menu.png" alt="menu"></div> -->
+      <div id="navbar">
+        <a href="">Nutri-Calc</a>
+        <a href="">Home</a>
+        <a href="">Create Recipe</a>
+      </div>
+      <!-- <h1>Nutrition Builder</h1> -->
+    
       <p>here is the list of recipes</p>
       <ul id="recipeList"></ul>
-    </div>
+    
     <br>
     <br>
     <br>
-    <div>
       <h2>Add New Recipe</h2>
-    </div>
+    
     <form id="form1">
       <label for="name">Recipe Name:</label><br>
       <input type="text" id="name" name="name" value=""><br>
@@ -60,6 +50,7 @@
     <ul id="ingredientList"></ul>
 
     <p>Nutrition:</p>
+    <div id="nutrition"></div>
     <button type="submit" form="form1">Add Recipe</button>
 
     <div></div>

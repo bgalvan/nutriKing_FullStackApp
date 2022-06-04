@@ -36,8 +36,38 @@ router.get("/vegdata", function (req, res) {
 //   res.json(recipedata);
 // });
 
-router.get("/ingredients", function (req, res) {
-  console.log(req.body);
+router.post("/ingredient", function (req, res) {
+  console.log("req body: ", req.body);
+  var query = "";
+
+  query += req.body.qty + " " + req.body.unit + " " + req.body.name;
+
+  console.log("query", query);
+
+  const request = require("request");
+  request.get(
+    {
+      url: "https://api.calorieninjas.com/v1/nutrition?query=" + query,
+      headers: {
+        "X-Api-Key": "66bZo5YIpvKhFpDZBZGEXg==DFUYD4LespAwZPwk",
+      },
+    },
+
+    function (error, response, body) {
+      if (error) return console.error("Request failed:", error);
+      else if (response.statusCode != 200)
+        return console.error(
+          "Error:",
+          response.statusCode,
+          body.toString("utf8")
+        );
+      else console.log(body);
+      console.log("done");
+      res.header("Access-Control-Allow-Origin", "*");
+      var data = JSON.stringify(body);
+      res.send(data);
+    }
+  );
 });
 
 //receives a recipe oject and get a nutrition info for all ingredients in recipe
@@ -65,6 +95,7 @@ router.post("/recipes", function (req, res) {
         "X-Api-Key": "66bZo5YIpvKhFpDZBZGEXg==DFUYD4LespAwZPwk",
       },
     },
+
     function (error, response, body) {
       if (error) return console.error("Request failed:", error);
       else if (response.statusCode != 200)
@@ -75,10 +106,10 @@ router.post("/recipes", function (req, res) {
         );
       else console.log(body);
       console.log("done");
+      res.send(body);
     }
   );
-  res.header("Access-Control-Allow-Origin", "*");
-  res.send("Hello World");
+  // res.header("Access-Control-Allow-Origin", "*");
 });
 
 module.exports = router;

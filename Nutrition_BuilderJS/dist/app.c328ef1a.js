@@ -2699,7 +2699,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //my code
 var RESTAPI_URL = "https://localhost/3001"; // const NINJA_URL = "66bZo5YIpvKhFpDZBZGEXg==DFUYD4LespAwZPwk";
 
-var ingredientArray = []; //consider having nutrition data stored locally so you don't call api every time we add or remove ingredient
+var ingredientArray = [];
+var nutrition = []; //consider having nutrition data stored locally so you don't call api every time we add or remove ingredient
 // var nutrition = [];
 //function that updates
 
@@ -2723,43 +2724,6 @@ var mymain = /*#__PURE__*/function () {
 
 mymain();
 
-var addTodoItem = /*#__PURE__*/function () {
-  var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(todo) {
-    var response, newTodoItem;
-    return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-      while (1) {
-        switch (_context2.prev = _context2.next) {
-          case 0:
-            _context2.prev = 0;
-            _context2.next = 3;
-            return _axios.default.post("".concat(BASE_URL, "/todos"), todo);
-
-          case 3:
-            response = _context2.sent;
-            newTodoItem = response.data;
-            console.log("Added a new Todo!", newTodoItem);
-            return _context2.abrupt("return", newTodoItem);
-
-          case 9:
-            _context2.prev = 9;
-            _context2.t0 = _context2["catch"](0);
-            console.error(_context2.t0);
-
-          case 12:
-          case "end":
-            return _context2.stop();
-        }
-      }
-    }, _callee2, null, [[0, 9]]);
-  }));
-
-  return function addTodoItem(_x) {
-    return _ref2.apply(this, arguments);
-  };
-}();
-
-exports.addTodoItem = addTodoItem;
-
 var createIngredientElement = function createIngredientElement(item) {
   var ingredientElement = document.createElement("li");
   ingredientElement.appendChild(document.createTextNode(item.name));
@@ -2769,17 +2733,37 @@ var createIngredientElement = function createIngredientElement(item) {
 
 var ingredientList = document.getElementById("ingredientList"); //initialize the recipe list displayed in html
 
-var recipeList = document.getElementById("recipeList"); //add ingredients to display and to array
+var recipeList = document.getElementById("recipeList");
+var nutritionInfo = document.getElementById("nutrition"); //add ingredients to display and to array
 
-var addIngredient = function addIngredient(ingredient) {
-  ingredientList.appendChild(createIngredientElement(ingredient));
-  ingredientArray.push(ingredient);
-};
+var addIngredient = /*#__PURE__*/function () {
+  var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(ingredient) {
+    return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            ingredientList.appendChild(createIngredientElement(ingredient));
+            ingredientArray.push(ingredient);
+            getIngredientNutrition(ingredient); // displayNutrition(ingredient);
+            // nutritionInfo.appendChild(document.createTextNode(nutrition));
+
+          case 3:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2);
+  }));
+
+  return function addIngredient(_x) {
+    return _ref2.apply(this, arguments);
+  };
+}();
 
 var ingredientForm = document.getElementById("form2");
 ingredientForm.addEventListener("submit", /*#__PURE__*/function () {
   var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(event) {
-    var name, qty, ingredient;
+    var name, qty, unit, ingredient;
     return _regeneratorRuntime().wrap(function _callee3$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
@@ -2787,15 +2771,20 @@ ingredientForm.addEventListener("submit", /*#__PURE__*/function () {
             event.preventDefault();
             name = document.querySelector("#ingredient").value;
             qty = document.querySelector("#qty").value;
+            unit = document.querySelector("#unit").value;
             ingredient = {
               name: name,
-              qty: qty
+              qty: qty,
+              unit: unit
             };
             console.log("name: ", name);
             console.log("qty: ", qty);
             addIngredient(ingredient); // getData(ingredientArray);
 
-          case 7:
+            document.querySelector("#ingredient").value = "";
+            document.querySelector("#qty").value = "";
+
+          case 10:
           case "end":
             return _context3.stop();
         }
@@ -2837,6 +2826,14 @@ recipeForm.addEventListener("submit", /*#__PURE__*/function () {
   };
 }());
 
+function updateDisplayNutrition() {
+  // console.log("nutrition: ", nutrition.items[0]);
+  var message = "";
+  console.log("nutrition: ", nutrition);
+  nutritionInfo.appendChild(document.createTextNode(nutrition));
+  console.log("item 1: ", nutrition[0].items);
+}
+
 var submitRecipe = function submitRecipe(recipe) {
   var recipeElement = document.createElement("li");
   recipeElement.appendChild(document.createTextNode(recipe.name));
@@ -2844,14 +2841,24 @@ var submitRecipe = function submitRecipe(recipe) {
   //store recipe in REST server(until db is setup)
 
   ingredientArray = [];
-  getNutrition(recipe);
-}; //HTTP
+  getRecipeNutrition(recipe);
+}; // async function updateNutrition(ingredient) {
+//   try {
+//     var data = getIngredientNutrition(ingredient);
+//   } catch (errors) {
+//     console.log(errors);
+//   }
+//   console.log("data: ", data);
+//   nutritionInfo.appendChild(document.createTextNode(nutrition));
+// }
+//HTTP
 //get data from calorieninja api for recipe
 
 
 var getData = /*#__PURE__*/function () {
   var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(ingredients) {
-    var response, nutrition;
+    var response, _nutrition;
+
     return _regeneratorRuntime().wrap(function _callee5$(_context5) {
       while (1) {
         switch (_context5.prev = _context5.next) {
@@ -2864,9 +2871,9 @@ var getData = /*#__PURE__*/function () {
 
           case 3:
             response = _context5.sent;
-            nutrition = response.data; // console.log("POST: nutrition response", nutrition);
+            _nutrition = response.data; // console.log("POST: nutrition response", nutrition);
 
-            return _context5.abrupt("return", nutrition);
+            return _context5.abrupt("return", _nutrition);
 
           case 8:
             _context5.prev = 8;
@@ -2886,7 +2893,7 @@ var getData = /*#__PURE__*/function () {
   };
 }();
 
-function getNutrition(recipeData) {
+function getRecipeNutrition(recipeData) {
   _axios.default.post("http://nutriclient:3001/recipes", recipeData).then(function (res) {
     console.log(res);
     console.log(res.data);
@@ -2894,6 +2901,56 @@ function getNutrition(recipeData) {
     return console.log(error);
   });
 }
+
+function getIngredientNutrition(recipeData) {
+  _axios.default.post("http://nutriclient:3001/ingredient", recipeData).then(function (res) {
+    console.log(res);
+    console.log(res.data);
+    nutrition.push(res.data); // console.log("nutrition", nutrition);
+    // return res.data;
+
+    updateDisplayNutrition();
+  }).catch(function (error) {
+    return console.log(error);
+  });
+}
+
+var addTodoItem = /*#__PURE__*/function () {
+  var _ref6 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6(todo) {
+    var response, newTodoItem;
+    return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+      while (1) {
+        switch (_context6.prev = _context6.next) {
+          case 0:
+            _context6.prev = 0;
+            _context6.next = 3;
+            return _axios.default.post("".concat(BASE_URL, "/todos"), todo);
+
+          case 3:
+            response = _context6.sent;
+            newTodoItem = response.data;
+            console.log("Added a new Todo!", newTodoItem);
+            return _context6.abrupt("return", newTodoItem);
+
+          case 9:
+            _context6.prev = 9;
+            _context6.t0 = _context6["catch"](0);
+            console.error(_context6.t0);
+
+          case 12:
+          case "end":
+            return _context6.stop();
+        }
+      }
+    }, _callee6, null, [[0, 9]]);
+  }));
+
+  return function addTodoItem(_x5) {
+    return _ref6.apply(this, arguments);
+  };
+}();
+
+exports.addTodoItem = addTodoItem;
 },{"regenerator-runtime/runtime":"node_modules/regenerator-runtime/runtime.js","axios":"node_modules/axios/index.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -2922,7 +2979,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49243" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59198" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
