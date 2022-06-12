@@ -16,4 +16,13 @@ router.get("/1", async function (req, res, next) {
   return res.json(food);
 });
 
+router.post("/1", async function (req, res, next) {
+  console.log(req);
+  var message = " Hi ";
+  res.send(message);
+  // await DB("recipes").insert({ id: 1, title: "food" });
+  // const food = await DB("recipes").select(["id", "title"]);
+  // return res.json(food);
+});
+
 module.exports = router;

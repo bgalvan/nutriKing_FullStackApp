@@ -2674,13 +2674,476 @@ module.exports.default = axios;
 
 },{"./utils":"node_modules/axios/lib/utils.js","./helpers/bind":"node_modules/axios/lib/helpers/bind.js","./core/Axios":"node_modules/axios/lib/core/Axios.js","./core/mergeConfig":"node_modules/axios/lib/core/mergeConfig.js","./defaults":"node_modules/axios/lib/defaults.js","./cancel/Cancel":"node_modules/axios/lib/cancel/Cancel.js","./cancel/CancelToken":"node_modules/axios/lib/cancel/CancelToken.js","./cancel/isCancel":"node_modules/axios/lib/cancel/isCancel.js","./helpers/spread":"node_modules/axios/lib/helpers/spread.js","./helpers/isAxiosError":"node_modules/axios/lib/helpers/isAxiosError.js"}],"node_modules/axios/index.js":[function(require,module,exports) {
 module.exports = require('./lib/axios');
-},{"./lib/axios":"node_modules/axios/lib/axios.js"}],"app.js":[function(require,module,exports) {
-"use strict";
+},{"./lib/axios":"node_modules/axios/lib/axios.js"}],"node_modules/parcel-bundler/src/builtins/_empty.js":[function(require,module,exports) {
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.addTodoItem = void 0;
+},{}],"node_modules/path-browserify/index.js":[function(require,module,exports) {
+var process = require("process");
+// .dirname, .basename, and .extname methods are extracted from Node.js v8.11.1,
+// backported and transplited with Babel, with backwards-compat fixes
+
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// resolves . and .. elements in a path array with directory names there
+// must be no slashes, empty elements, or device names (c:\) in the array
+// (so also no leading and trailing slashes - it does not distinguish
+// relative and absolute paths)
+function normalizeArray(parts, allowAboveRoot) {
+  // if the path tries to go above the root, `up` ends up > 0
+  var up = 0;
+  for (var i = parts.length - 1; i >= 0; i--) {
+    var last = parts[i];
+    if (last === '.') {
+      parts.splice(i, 1);
+    } else if (last === '..') {
+      parts.splice(i, 1);
+      up++;
+    } else if (up) {
+      parts.splice(i, 1);
+      up--;
+    }
+  }
+
+  // if the path is allowed to go above the root, restore leading ..s
+  if (allowAboveRoot) {
+    for (; up--; up) {
+      parts.unshift('..');
+    }
+  }
+
+  return parts;
+}
+
+// path.resolve([from ...], to)
+// posix version
+exports.resolve = function() {
+  var resolvedPath = '',
+      resolvedAbsolute = false;
+
+  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
+    var path = (i >= 0) ? arguments[i] : process.cwd();
+
+    // Skip empty and invalid entries
+    if (typeof path !== 'string') {
+      throw new TypeError('Arguments to path.resolve must be strings');
+    } else if (!path) {
+      continue;
+    }
+
+    resolvedPath = path + '/' + resolvedPath;
+    resolvedAbsolute = path.charAt(0) === '/';
+  }
+
+  // At this point the path should be resolved to a full absolute path, but
+  // handle relative paths to be safe (might happen when process.cwd() fails)
+
+  // Normalize the path
+  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
+    return !!p;
+  }), !resolvedAbsolute).join('/');
+
+  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
+};
+
+// path.normalize(path)
+// posix version
+exports.normalize = function(path) {
+  var isAbsolute = exports.isAbsolute(path),
+      trailingSlash = substr(path, -1) === '/';
+
+  // Normalize the path
+  path = normalizeArray(filter(path.split('/'), function(p) {
+    return !!p;
+  }), !isAbsolute).join('/');
+
+  if (!path && !isAbsolute) {
+    path = '.';
+  }
+  if (path && trailingSlash) {
+    path += '/';
+  }
+
+  return (isAbsolute ? '/' : '') + path;
+};
+
+// posix version
+exports.isAbsolute = function(path) {
+  return path.charAt(0) === '/';
+};
+
+// posix version
+exports.join = function() {
+  var paths = Array.prototype.slice.call(arguments, 0);
+  return exports.normalize(filter(paths, function(p, index) {
+    if (typeof p !== 'string') {
+      throw new TypeError('Arguments to path.join must be strings');
+    }
+    return p;
+  }).join('/'));
+};
+
+
+// path.relative(from, to)
+// posix version
+exports.relative = function(from, to) {
+  from = exports.resolve(from).substr(1);
+  to = exports.resolve(to).substr(1);
+
+  function trim(arr) {
+    var start = 0;
+    for (; start < arr.length; start++) {
+      if (arr[start] !== '') break;
+    }
+
+    var end = arr.length - 1;
+    for (; end >= 0; end--) {
+      if (arr[end] !== '') break;
+    }
+
+    if (start > end) return [];
+    return arr.slice(start, end - start + 1);
+  }
+
+  var fromParts = trim(from.split('/'));
+  var toParts = trim(to.split('/'));
+
+  var length = Math.min(fromParts.length, toParts.length);
+  var samePartsLength = length;
+  for (var i = 0; i < length; i++) {
+    if (fromParts[i] !== toParts[i]) {
+      samePartsLength = i;
+      break;
+    }
+  }
+
+  var outputParts = [];
+  for (var i = samePartsLength; i < fromParts.length; i++) {
+    outputParts.push('..');
+  }
+
+  outputParts = outputParts.concat(toParts.slice(samePartsLength));
+
+  return outputParts.join('/');
+};
+
+exports.sep = '/';
+exports.delimiter = ':';
+
+exports.dirname = function (path) {
+  if (typeof path !== 'string') path = path + '';
+  if (path.length === 0) return '.';
+  var code = path.charCodeAt(0);
+  var hasRoot = code === 47 /*/*/;
+  var end = -1;
+  var matchedSlash = true;
+  for (var i = path.length - 1; i >= 1; --i) {
+    code = path.charCodeAt(i);
+    if (code === 47 /*/*/) {
+        if (!matchedSlash) {
+          end = i;
+          break;
+        }
+      } else {
+      // We saw the first non-path separator
+      matchedSlash = false;
+    }
+  }
+
+  if (end === -1) return hasRoot ? '/' : '.';
+  if (hasRoot && end === 1) {
+    // return '//';
+    // Backwards-compat fix:
+    return '/';
+  }
+  return path.slice(0, end);
+};
+
+function basename(path) {
+  if (typeof path !== 'string') path = path + '';
+
+  var start = 0;
+  var end = -1;
+  var matchedSlash = true;
+  var i;
+
+  for (i = path.length - 1; i >= 0; --i) {
+    if (path.charCodeAt(i) === 47 /*/*/) {
+        // If we reached a path separator that was not part of a set of path
+        // separators at the end of the string, stop now
+        if (!matchedSlash) {
+          start = i + 1;
+          break;
+        }
+      } else if (end === -1) {
+      // We saw the first non-path separator, mark this as the end of our
+      // path component
+      matchedSlash = false;
+      end = i + 1;
+    }
+  }
+
+  if (end === -1) return '';
+  return path.slice(start, end);
+}
+
+// Uses a mixed approach for backwards-compatibility, as ext behavior changed
+// in new Node.js versions, so only basename() above is backported here
+exports.basename = function (path, ext) {
+  var f = basename(path);
+  if (ext && f.substr(-1 * ext.length) === ext) {
+    f = f.substr(0, f.length - ext.length);
+  }
+  return f;
+};
+
+exports.extname = function (path) {
+  if (typeof path !== 'string') path = path + '';
+  var startDot = -1;
+  var startPart = 0;
+  var end = -1;
+  var matchedSlash = true;
+  // Track the state of characters (if any) we see before our first dot and
+  // after any path separator we find
+  var preDotState = 0;
+  for (var i = path.length - 1; i >= 0; --i) {
+    var code = path.charCodeAt(i);
+    if (code === 47 /*/*/) {
+        // If we reached a path separator that was not part of a set of path
+        // separators at the end of the string, stop now
+        if (!matchedSlash) {
+          startPart = i + 1;
+          break;
+        }
+        continue;
+      }
+    if (end === -1) {
+      // We saw the first non-path separator, mark this as the end of our
+      // extension
+      matchedSlash = false;
+      end = i + 1;
+    }
+    if (code === 46 /*.*/) {
+        // If this is our first dot, mark it as the start of our extension
+        if (startDot === -1)
+          startDot = i;
+        else if (preDotState !== 1)
+          preDotState = 1;
+    } else if (startDot !== -1) {
+      // We saw a non-dot and non-path separator before our dot, so we should
+      // have a good chance at having a non-empty extension
+      preDotState = -1;
+    }
+  }
+
+  if (startDot === -1 || end === -1 ||
+      // We saw a non-dot character immediately before the dot
+      preDotState === 0 ||
+      // The (right-most) trimmed path component is exactly '..'
+      preDotState === 1 && startDot === end - 1 && startDot === startPart + 1) {
+    return '';
+  }
+  return path.slice(startDot, end);
+};
+
+function filter (xs, f) {
+    if (xs.filter) return xs.filter(f);
+    var res = [];
+    for (var i = 0; i < xs.length; i++) {
+        if (f(xs[i], i, xs)) res.push(xs[i]);
+    }
+    return res;
+}
+
+// String.prototype.substr - negative index don't work in IE8
+var substr = 'ab'.substr(-1) === 'b'
+    ? function (str, start, len) { return str.substr(start, len) }
+    : function (str, start, len) {
+        if (start < 0) start = str.length + start;
+        return str.substr(start, len);
+    }
+;
+
+},{"process":"node_modules/process/browser.js"}],"node_modules/os-browserify/browser.js":[function(require,module,exports) {
+exports.endianness = function () { return 'LE' };
+
+exports.hostname = function () {
+    if (typeof location !== 'undefined') {
+        return location.hostname
+    }
+    else return '';
+};
+
+exports.loadavg = function () { return [] };
+
+exports.uptime = function () { return 0 };
+
+exports.freemem = function () {
+    return Number.MAX_VALUE;
+};
+
+exports.totalmem = function () {
+    return Number.MAX_VALUE;
+};
+
+exports.cpus = function () { return [] };
+
+exports.type = function () { return 'Browser' };
+
+exports.release = function () {
+    if (typeof navigator !== 'undefined') {
+        return navigator.appVersion;
+    }
+    return '';
+};
+
+exports.networkInterfaces
+= exports.getNetworkInterfaces
+= function () { return {} };
+
+exports.arch = function () { return 'javascript' };
+
+exports.platform = function () { return 'browser' };
+
+exports.tmpdir = exports.tmpDir = function () {
+    return '/tmp';
+};
+
+exports.EOL = '\n';
+
+exports.homedir = function () {
+	return '/'
+};
+
+},{}],"node_modules/dotenv/lib/main.js":[function(require,module,exports) {
+var process = require("process");
+var fs = require('fs');
+
+var path = require('path');
+
+var os = require('os');
+
+var LINE = /(?:^|^)\s*(?:export\s+)?([\w.-]+)(?:\s*=\s*?|:\s+?)(\s*'(?:\\'|[^'])*'|\s*"(?:\\"|[^"])*"|\s*`(?:\\`|[^`])*`|[^#\r\n]+)?\s*(?:#.*)?(?:$|$)/mg; // Parser src into an Object
+
+function parse(src) {
+  var obj = {}; // Convert buffer to string
+
+  var lines = src.toString(); // Convert line breaks to same format
+
+  lines = lines.replace(/\r\n?/mg, '\n');
+  var match;
+
+  while ((match = LINE.exec(lines)) != null) {
+    var key = match[1]; // Default undefined or null to empty string
+
+    var value = match[2] || ''; // Remove whitespace
+
+    value = value.trim(); // Check if double quoted
+
+    var maybeQuote = value[0]; // Remove surrounding quotes
+
+    value = value.replace(/^(['"`])([\s\S]*)\1$/mg, '$2'); // Expand newlines if double quoted
+
+    if (maybeQuote === '"') {
+      value = value.replace(/\\n/g, '\n');
+      value = value.replace(/\\r/g, '\r');
+    } // Add to object
+
+
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+function _log(message) {
+  console.log("[dotenv][DEBUG] ".concat(message));
+}
+
+function _resolveHome(envPath) {
+  return envPath[0] === '~' ? path.join(os.homedir(), envPath.slice(1)) : envPath;
+} // Populates process.env from .env file
+
+
+function config(options) {
+  var dotenvPath = path.resolve(process.cwd(), '.env');
+  var encoding = 'utf8';
+  var debug = Boolean(options && options.debug);
+  var override = Boolean(options && options.override);
+
+  if (options) {
+    if (options.path != null) {
+      dotenvPath = _resolveHome(options.path);
+    }
+
+    if (options.encoding != null) {
+      encoding = options.encoding;
+    }
+  }
+
+  try {
+    // Specifying an encoding returns a string instead of a buffer
+    var parsed = DotenvModule.parse(fs.readFileSync(dotenvPath, {
+      encoding: encoding
+    }));
+    Object.keys(parsed).forEach(function (key) {
+      if (!Object.prototype.hasOwnProperty.call(process.env, key)) {
+        process.env[key] = parsed[key];
+      } else {
+        if (override === true) {
+          process.env[key] = parsed[key];
+        }
+
+        if (debug) {
+          if (override === true) {
+            _log("\"".concat(key, "\" is already defined in `process.env` and WAS overwritten"));
+          } else {
+            _log("\"".concat(key, "\" is already defined in `process.env` and was NOT overwritten"));
+          }
+        }
+      }
+    });
+    return {
+      parsed: parsed
+    };
+  } catch (e) {
+    if (debug) {
+      _log("Failed to load ".concat(dotenvPath, " ").concat(e.message));
+    }
+
+    return {
+      error: e
+    };
+  }
+}
+
+var DotenvModule = {
+  config: config,
+  parse: parse
+};
+module.exports.config = DotenvModule.config;
+module.exports.parse = DotenvModule.parse;
+module.exports = DotenvModule;
+},{"fs":"node_modules/parcel-bundler/src/builtins/_empty.js","path":"node_modules/path-browserify/index.js","os":"node_modules/os-browserify/browser.js","process":"node_modules/process/browser.js"}],"app.js":[function(require,module,exports) {
+var define;
+"use strict";
 
 require("regenerator-runtime/runtime");
 
@@ -2696,13 +3159,23 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-//my code
-var RESTAPI_URL = "https://localhost/3001"; // const NINJA_URL = "66bZo5YIpvKhFpDZBZGEXg==DFUYD4LespAwZPwk";
+require("dotenv").config();
 
+var REST_URL = "http://nutriclient:3001";
 var ingredientArray = [];
-var nutrition = []; //consider having nutrition data stored locally so you don't call api every time we add or remove ingredient
-// var nutrition = [];
-//function that updates
+var recipeArray = [];
+var recipeNutrition = {
+  calories: 0,
+  carbohydrates_total_g: 0,
+  cholesterol_mg: 0,
+  fat_saturated_g: 0,
+  fat_total_g: 0,
+  fiber_g: 0,
+  potassium_mg: 0,
+  protein_g: 0,
+  serving_size_g: 0,
+  sodium_mg: 0
+}; //function that updates
 
 var mymain = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
@@ -2722,51 +3195,19 @@ var mymain = /*#__PURE__*/function () {
   };
 }();
 
-mymain();
+mymain(); //initalize dynamic html data elements
 
-var createIngredientElement = function createIngredientElement(item) {
-  var ingredientElement = document.createElement("li");
-  ingredientElement.appendChild(document.createTextNode(item.name));
-  return ingredientElement;
-}; //initalize the ingredient list object
-
-
-var ingredientList = document.getElementById("ingredientList"); //initialize the recipe list displayed in html
-
+var ingredientList = document.getElementById("ingredientList");
 var recipeList = document.getElementById("recipeList");
-var nutritionInfo = document.getElementById("nutrition"); //add ingredients to display and to array
-
-var addIngredient = /*#__PURE__*/function () {
-  var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(ingredient) {
-    return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-      while (1) {
-        switch (_context2.prev = _context2.next) {
-          case 0:
-            ingredientList.appendChild(createIngredientElement(ingredient));
-            ingredientArray.push(ingredient);
-            getIngredientNutrition(ingredient); // displayNutrition(ingredient);
-            // nutritionInfo.appendChild(document.createTextNode(nutrition));
-
-          case 3:
-          case "end":
-            return _context2.stop();
-        }
-      }
-    }, _callee2);
-  }));
-
-  return function addIngredient(_x) {
-    return _ref2.apply(this, arguments);
-  };
-}();
+var nutritionInfo = document.getElementById("nutrition"); //handle ingredient part of form
 
 var ingredientForm = document.getElementById("form2");
 ingredientForm.addEventListener("submit", /*#__PURE__*/function () {
-  var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(event) {
+  var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(event) {
     var name, qty, unit, ingredient;
-    return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+    return _regeneratorRuntime().wrap(function _callee2$(_context2) {
       while (1) {
-        switch (_context3.prev = _context3.next) {
+        switch (_context2.prev = _context2.next) {
           case 0:
             event.preventDefault();
             name = document.querySelector("#ingredient").value;
@@ -2775,35 +3216,33 @@ ingredientForm.addEventListener("submit", /*#__PURE__*/function () {
             ingredient = {
               name: name,
               qty: qty,
-              unit: unit
+              unit: unit,
+              nutrition: ""
             };
-            console.log("name: ", name);
-            console.log("qty: ", qty);
-            addIngredient(ingredient); // getData(ingredientArray);
-
+            addIngredient(ingredient);
             document.querySelector("#ingredient").value = "";
             document.querySelector("#qty").value = "";
 
-          case 10:
+          case 8:
           case "end":
-            return _context3.stop();
+            return _context2.stop();
         }
       }
-    }, _callee3);
+    }, _callee2);
   }));
 
-  return function (_x2) {
-    return _ref3.apply(this, arguments);
+  return function (_x) {
+    return _ref2.apply(this, arguments);
   };
-}()); //form for recipe builder
+}()); //handle complete recipe form
 
 var recipeForm = document.getElementById("form1");
 recipeForm.addEventListener("submit", /*#__PURE__*/function () {
-  var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(event) {
+  var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(event) {
     var name, recipe;
-    return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+    return _regeneratorRuntime().wrap(function _callee3$(_context3) {
       while (1) {
-        switch (_context4.prev = _context4.next) {
+        switch (_context3.prev = _context3.next) {
           case 0:
             event.preventDefault();
             name = document.querySelector("#name").value;
@@ -2815,143 +3254,216 @@ recipeForm.addEventListener("submit", /*#__PURE__*/function () {
 
           case 4:
           case "end":
+            return _context3.stop();
+        }
+      }
+    }, _callee3);
+  }));
+
+  return function (_x2) {
+    return _ref3.apply(this, arguments);
+  };
+}());
+
+var createIngredientElement = function createIngredientElement(item) {
+  var ingredientElement = document.createElement("li");
+  ingredientElement.id = item.name;
+  ingredientElement.appendChild(document.createTextNode(item.qty + " " + item.unit + " " + item.name)); // // ingredientElement.outerHTML = "<div id=";
+
+  return ingredientElement;
+}; // adds nutrition from each ingredient into a sum object
+
+
+function updateNutrition() {
+  recipeNutrition.calories = 0;
+  recipeNutrition.carbohydrates_total_g = 0;
+  recipeNutrition.cholesterol_mg = 0;
+  recipeNutrition.fat_saturated_g = 0;
+  recipeNutrition.fat_total_g = 0;
+  recipeNutrition.fiber_g = 0;
+  recipeNutrition.protein_g = 0;
+  recipeNutrition.serving_size_g = 0;
+  recipeNutrition.sodium_mg = 0;
+  recipeNutrition.potassium_mg = 0;
+
+  for (var i = 0; i < ingredientArray.length; i++) {
+    recipeNutrition.calories += Math.round(ingredientArray[i].nutrition.calories);
+    recipeNutrition.carbohydrates_total_g += Math.round(ingredientArray[i].nutrition.carbohydrates_total_g);
+    recipeNutrition.cholesterol_mg += Math.round(ingredientArray[i].nutrition.cholesterol_mg);
+    recipeNutrition.fat_saturated_g += Math.round(ingredientArray[i].nutrition.fat_saturated_g);
+    recipeNutrition.fat_total_g += Math.round(ingredientArray[i].nutrition.fat_total_g);
+    recipeNutrition.fiber_g += Math.round(ingredientArray[i].nutrition.fiber_g);
+    recipeNutrition.potassium_mg += Math.round(ingredientArray[i].nutrition.potassium_mg);
+    recipeNutrition.protein_g += Math.round(ingredientArray[i].nutrition.protein_g);
+    recipeNutrition.serving_size_g += Math.round(ingredientArray[i].nutrition.serving_size_g);
+    recipeNutrition.sodium_mg += Math.round(ingredientArray[i].nutrition.sodium_mg);
+  }
+}
+
+var incrementNutrition = function incrementNutrition(nutrition) {
+  recipeNutrition.calories += Math.round(nutrition.calories);
+  recipeNutrition.carbohydrates_total_g += Math.round(nutrition.carbohydrates_total_g);
+  recipeNutrition.cholesterol_mg += Math.round(nutrition.cholesterol_mg);
+  recipeNutrition.fat_saturated_g += Math.round(nutrition.fat_saturated_g);
+  recipeNutrition.fat_total_g += Math.round(nutrition.fat_total_g);
+  recipeNutrition.fiber_g += Math.round(nutrition.fiber_g);
+  recipeNutrition.potassium_mg += Math.round(nutrition.potassium_mg);
+  recipeNutrition.protein_g += Math.round(nutrition.protein_g);
+  recipeNutrition.serving_size_g += Math.round(nutrition.serving_size_g);
+  recipeNutrition.sodium_mg += Math.round(nutrition.sodium_mg);
+};
+
+var decrementNutrition = function decrementNutrition(nutrition) {
+  recipeNutrition.calories -= Math.round(nutrition.calories);
+  recipeNutrition.carbohydrates_total_g -= Math.round(nutrition.carbohydrates_total_g);
+  recipeNutrition.cholesterol_mg -= Math.round(nutrition.cholesterol_mg);
+  recipeNutrition.fat_saturated_g -= Math.round(nutrition.fat_saturated_g);
+  recipeNutrition.fat_total_g -= Math.round(nutrition.fat_total_g);
+  recipeNutrition.fiber_g -= Math.round(nutrition.fiber_g);
+  recipeNutrition.potassium_mg -= Math.round(nutrition.potassium_mg);
+  recipeNutrition.protein_g -= Math.round(nutrition.protein_g);
+  recipeNutrition.serving_size_g -= Math.round(nutrition.serving_size_g);
+  recipeNutrition.sodium_mg -= Math.round(nutrition.sodium_mg);
+};
+
+function displayNutrition() {
+  var message = "Calories: " + recipeNutrition.calories + " Carbs: " + recipeNutrition.carbohydrates_total_g + " Protein: " + recipeNutrition.protein_g + " Total Fat: " + recipeNutrition.fat_total_g + " Saturated Fat: " + recipeNutrition.fat_saturated_g + " Fiber: " + recipeNutrition.fiber_g + " Cholesterol: " + recipeNutrition.cholesterol_mg + " Potassium: " + recipeNutrition.potassium_mg + " Sodium: " + recipeNutrition.sodium_mg;
+  nutritionInfo.innerHTML = message;
+}
+
+var addIngredient = /*#__PURE__*/function () {
+  var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(ingredient) {
+    var nutritionData, nutriObj;
+    return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+      while (1) {
+        switch (_context4.prev = _context4.next) {
+          case 0:
+            ingredientList.appendChild(createIngredientElement(ingredient));
+            _context4.next = 3;
+            return getIngredientNutrition(ingredient);
+
+          case 3:
+            nutritionData = _context4.sent;
+            nutriObj = JSON.parse(nutritionData);
+            ingredient.nutrition = nutriObj.items[0];
+            ingredientArray.push(ingredient);
+            incrementNutrition(ingredient.nutrition);
+            displayNutrition();
+            console.log("Children: ", ingredientList.children);
+            document.getElementById(ingredient.name).addEventListener("click", function () {
+              removeIngredient(ingredient);
+            });
+            console.log("array: ", ingredientArray);
+
+          case 12:
+          case "end":
             return _context4.stop();
         }
       }
     }, _callee4);
   }));
 
-  return function (_x3) {
+  return function addIngredient(_x3) {
     return _ref4.apply(this, arguments);
   };
-}());
+}();
 
-function updateDisplayNutrition() {
-  // console.log("nutrition: ", nutrition.items[0]);
-  var message = "";
-  console.log("nutrition: ", nutrition);
-  nutritionInfo.appendChild(document.createTextNode(nutrition));
-  console.log("item 1: ", nutrition[0].items);
+function removeIngredient(ingredient) {
+  document.getElementById(ingredient.name).remove();
+  var index = ingredientArray.indexOf(ingredient);
+  console.log("index: ", index);
+  ingredientArray.splice(index, 1);
+  decrementNutrition(ingredient.nutrition);
+  displayNutrition();
+  console.log("array: ", ingredientArray);
 }
 
 var submitRecipe = function submitRecipe(recipe) {
-  var recipeElement = document.createElement("li");
-  recipeElement.appendChild(document.createTextNode(recipe.name));
-  recipeList.appendChild(recipeElement); //send to api
+  // const recipeElement = document.createElement("li");
+  // recipeElement.appendChild(document.createTextNode(recipe.name));
+  // recipeList.appendChild(recipeElement);
   //store recipe in REST server(until db is setup)
-
+  // recipeArray.push(recipe);
   ingredientArray = [];
-  getRecipeNutrition(recipe);
-}; // async function updateNutrition(ingredient) {
-//   try {
-//     var data = getIngredientNutrition(ingredient);
-//   } catch (errors) {
-//     console.log(errors);
-//   }
-//   console.log("data: ", data);
-//   nutritionInfo.appendChild(document.createTextNode(nutrition));
-// }
-//HTTP
+  recipeNutrition.calories = 0;
+  recipeNutrition.carbohydrates_total_g = 0;
+  recipeNutrition.cholesterol_mg = 0;
+  recipeNutrition.fat_saturated_g = 0;
+  recipeNutrition.fat_total_g = 0;
+  recipeNutrition.fiber_g = 0;
+  recipeNutrition.protein_g = 0;
+  recipeNutrition.serving_size_g = 0;
+  recipeNutrition.sodium_mg = 0;
+  recipeNutrition.potassium_mg = 0;
+}; //HTTP
 //get data from calorieninja api for recipe
 
 
-var getData = /*#__PURE__*/function () {
-  var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(ingredients) {
-    var response, _nutrition;
+function getRecipeNutrition(recipeData) {
+  _axios.default.post("".concat(REST_URL, "/recipes"), recipeData).then(function (res) {
+    console.log(res);
+    console.log(res.data);
+  }).catch(function (error) {
+    return console.log(error);
+  });
+}
 
+function getIngredientNutrition(_x4) {
+  return _getIngredientNutrition.apply(this, arguments);
+} // async function getIngredientNutrition(recipeData) {
+//   return await axios
+//     .post("http://nutriclient:3001/ingredient", recipeData)
+//     .then((res) => {
+//       console.log(res);
+//       console.log(res.data);
+//       (res) => res.data;
+//       // nutrition.push(res.data);
+//       // console.log("nutrition", nutrition);
+//     })
+//     .catch((error) => console.log(error));
+// }
+// export const addTodoItem = async (todo) => {
+//   try {
+//     const response = await axios.post(`${BASE_URL}/todos`, todo);
+//     const newTodoItem = response.data;
+//     console.log(`Added a new Todo!`, newTodoItem);
+//     return newTodoItem;
+//   } catch (errors) {
+//     console.error(errors);
+//   }
+// };
+
+
+function _getIngredientNutrition() {
+  _getIngredientNutrition = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(recipeData) {
+    var response;
     return _regeneratorRuntime().wrap(function _callee5$(_context5) {
       while (1) {
         switch (_context5.prev = _context5.next) {
           case 0:
             _context5.prev = 0;
             _context5.next = 3;
-            return _axios.default.get("http://localhost:3001/recipes", ingredients, {
-              crossDomain: true
-            });
+            return _axios.default.post("".concat(REST_URL, "/ingredient"), recipeData);
 
           case 3:
             response = _context5.sent;
-            _nutrition = response.data; // console.log("POST: nutrition response", nutrition);
+            return _context5.abrupt("return", response.data);
 
-            return _context5.abrupt("return", _nutrition);
-
-          case 8:
-            _context5.prev = 8;
+          case 7:
+            _context5.prev = 7;
             _context5.t0 = _context5["catch"](0);
-            console.log(_context5.t0);
+            console.error(_context5.t0);
 
-          case 11:
+          case 10:
           case "end":
             return _context5.stop();
         }
       }
-    }, _callee5, null, [[0, 8]]);
+    }, _callee5, null, [[0, 7]]);
   }));
-
-  return function getData(_x4) {
-    return _ref5.apply(this, arguments);
-  };
-}();
-
-function getRecipeNutrition(recipeData) {
-  _axios.default.post("http://nutriclient:3001/recipes", recipeData).then(function (res) {
-    console.log(res);
-    console.log(res.data);
-  }).catch(function (error) {
-    return console.log(error);
-  });
+  return _getIngredientNutrition.apply(this, arguments);
 }
-
-function getIngredientNutrition(recipeData) {
-  _axios.default.post("http://nutriclient:3001/ingredient", recipeData).then(function (res) {
-    console.log(res);
-    console.log(res.data);
-    nutrition.push(res.data); // console.log("nutrition", nutrition);
-    // return res.data;
-
-    updateDisplayNutrition();
-  }).catch(function (error) {
-    return console.log(error);
-  });
-}
-
-var addTodoItem = /*#__PURE__*/function () {
-  var _ref6 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6(todo) {
-    var response, newTodoItem;
-    return _regeneratorRuntime().wrap(function _callee6$(_context6) {
-      while (1) {
-        switch (_context6.prev = _context6.next) {
-          case 0:
-            _context6.prev = 0;
-            _context6.next = 3;
-            return _axios.default.post("".concat(BASE_URL, "/todos"), todo);
-
-          case 3:
-            response = _context6.sent;
-            newTodoItem = response.data;
-            console.log("Added a new Todo!", newTodoItem);
-            return _context6.abrupt("return", newTodoItem);
-
-          case 9:
-            _context6.prev = 9;
-            _context6.t0 = _context6["catch"](0);
-            console.error(_context6.t0);
-
-          case 12:
-          case "end":
-            return _context6.stop();
-        }
-      }
-    }, _callee6, null, [[0, 9]]);
-  }));
-
-  return function addTodoItem(_x5) {
-    return _ref6.apply(this, arguments);
-  };
-}();
-
-exports.addTodoItem = addTodoItem;
-},{"regenerator-runtime/runtime":"node_modules/regenerator-runtime/runtime.js","axios":"node_modules/axios/index.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"regenerator-runtime/runtime":"node_modules/regenerator-runtime/runtime.js","axios":"node_modules/axios/index.js","dotenv":"node_modules/dotenv/lib/main.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -2979,7 +3491,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59198" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55795" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

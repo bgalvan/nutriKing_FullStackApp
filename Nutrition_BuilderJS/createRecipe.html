@@ -14,10 +14,9 @@
       <!-- <div class="div-1"><img src="./assets/menu.png" alt="menu"></div> -->
       <div id="navbar">
         <a href="">Nutri-Calc</a>
-        <a href="">Home</a>
-        <a href="">Create Recipe</a>
+        <a href="./index.html">Home</a>
+        <a href="./createRecipe.html">Create Recipe</a>
       </div>
-    <br />
     <br />
       <h2>Add New Recipe</h2>
     </div>
@@ -37,7 +36,9 @@
         <option value="g">g</option>
         <option value="tbsp">tbsp</option>
         <option value="tsp">tsp</option>
-        <option value="pc">pc</option></select
+        <option value=""></option>
+        <!-- <option value="cup">cup</option> -->
+        </select
       ><br />
       <button type="submit" form="form2">Add Ingredient</button>
     </form>
@@ -45,9 +46,10 @@
     <ul id="ingredientList"></ul>
 
     <p>Nutrition:</p>
+    <div id="nutrition"></div>
     <button type="submit" form="form1">Add Recipe</button>
 
     <div></div>
-    <script src="app.js"></script>
+    <script src="./scripts/createRecipe.js"></script>
   </body>
 </html>
