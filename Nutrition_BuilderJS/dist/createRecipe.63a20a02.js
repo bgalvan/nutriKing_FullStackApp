@@ -3247,11 +3247,13 @@ recipeForm.addEventListener("submit", /*#__PURE__*/function () {
             name = document.querySelector("#name").value;
             recipe = {
               name: name,
-              ingredients: ingredientArray
+              ingredients: ingredientArray,
+              nutrition: recipeNutrition
             };
             submitRecipe(recipe);
+            document.querySelector("#name").value = "";
 
-          case 4:
+          case 5:
           case "end":
             return _context3.stop();
         }
@@ -3299,32 +3301,6 @@ function updateNutrition() {
   }
 }
 
-var incrementNutrition = function incrementNutrition(nutrition) {
-  recipeNutrition.calories += Math.round(nutrition.calories);
-  recipeNutrition.carbohydrates_total_g += Math.round(nutrition.carbohydrates_total_g);
-  recipeNutrition.cholesterol_mg += Math.round(nutrition.cholesterol_mg);
-  recipeNutrition.fat_saturated_g += Math.round(nutrition.fat_saturated_g);
-  recipeNutrition.fat_total_g += Math.round(nutrition.fat_total_g);
-  recipeNutrition.fiber_g += Math.round(nutrition.fiber_g);
-  recipeNutrition.potassium_mg += Math.round(nutrition.potassium_mg);
-  recipeNutrition.protein_g += Math.round(nutrition.protein_g);
-  recipeNutrition.serving_size_g += Math.round(nutrition.serving_size_g);
-  recipeNutrition.sodium_mg += Math.round(nutrition.sodium_mg);
-};
-
-var decrementNutrition = function decrementNutrition(nutrition) {
-  recipeNutrition.calories -= Math.round(nutrition.calories);
-  recipeNutrition.carbohydrates_total_g -= Math.round(nutrition.carbohydrates_total_g);
-  recipeNutrition.cholesterol_mg -= Math.round(nutrition.cholesterol_mg);
-  recipeNutrition.fat_saturated_g -= Math.round(nutrition.fat_saturated_g);
-  recipeNutrition.fat_total_g -= Math.round(nutrition.fat_total_g);
-  recipeNutrition.fiber_g -= Math.round(nutrition.fiber_g);
-  recipeNutrition.potassium_mg -= Math.round(nutrition.potassium_mg);
-  recipeNutrition.protein_g -= Math.round(nutrition.protein_g);
-  recipeNutrition.serving_size_g -= Math.round(nutrition.serving_size_g);
-  recipeNutrition.sodium_mg -= Math.round(nutrition.sodium_mg);
-};
-
 function displayNutrition() {
   var message = "Calories: " + recipeNutrition.calories + " Carbs: " + recipeNutrition.carbohydrates_total_g + " Protein: " + recipeNutrition.protein_g + " Total Fat: " + recipeNutrition.fat_total_g + " Saturated Fat: " + recipeNutrition.fat_saturated_g + " Fiber: " + recipeNutrition.fiber_g + " Cholesterol: " + recipeNutrition.cholesterol_mg + " Potassium: " + recipeNutrition.potassium_mg + " Sodium: " + recipeNutrition.sodium_mg;
   nutritionInfo.innerHTML = message;
@@ -3345,8 +3321,9 @@ var addIngredient = /*#__PURE__*/function () {
             nutritionData = _context4.sent;
             nutriObj = JSON.parse(nutritionData);
             ingredient.nutrition = nutriObj.items[0];
-            ingredientArray.push(ingredient);
-            incrementNutrition(ingredient.nutrition);
+            ingredientArray.push(ingredient); // incrementNutrition(ingredient.nutrition);
+
+            updateNutrition();
             displayNutrition();
             console.log("Children: ", ingredientList.children);
             document.getElementById(ingredient.name).addEventListener("click", function () {
@@ -3371,31 +3348,46 @@ function removeIngredient(ingredient) {
   document.getElementById(ingredient.name).remove();
   var index = ingredientArray.indexOf(ingredient);
   console.log("index: ", index);
-  ingredientArray.splice(index, 1);
-  decrementNutrition(ingredient.nutrition);
+  ingredientArray.splice(index, 1); // decrementNutrition(ingredient.nutrition);
+
+  updateNutrition();
   displayNutrition();
   console.log("array: ", ingredientArray);
 }
 
-var submitRecipe = function submitRecipe(recipe) {
-  // const recipeElement = document.createElement("li");
-  // recipeElement.appendChild(document.createTextNode(recipe.name));
-  // recipeList.appendChild(recipeElement);
-  //store recipe in REST server(until db is setup)
-  // recipeArray.push(recipe);
-  sendRecipe(recipe);
-  ingredientArray = [];
-  recipeNutrition.calories = 0;
-  recipeNutrition.carbohydrates_total_g = 0;
-  recipeNutrition.cholesterol_mg = 0;
-  recipeNutrition.fat_saturated_g = 0;
-  recipeNutrition.fat_total_g = 0;
-  recipeNutrition.fiber_g = 0;
-  recipeNutrition.protein_g = 0;
-  recipeNutrition.serving_size_g = 0;
-  recipeNutrition.sodium_mg = 0;
-  recipeNutrition.potassium_mg = 0;
-}; //HTTP
+var submitRecipe = /*#__PURE__*/function () {
+  var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(recipe) {
+    var res, i;
+    return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+      while (1) {
+        switch (_context5.prev = _context5.next) {
+          case 0:
+            _context5.next = 2;
+            return storeRecipe(recipe);
+
+          case 2:
+            res = _context5.sent;
+
+            for (i = 0; i < ingredientArray.length; i++) {
+              document.getElementById(ingredientArray[i].name).remove();
+            }
+
+            ingredientArray = [];
+            updateNutrition();
+            displayNutrition();
+
+          case 7:
+          case "end":
+            return _context5.stop();
+        }
+      }
+    }, _callee5);
+  }));
+
+  return function submitRecipe(_x4) {
+    return _ref5.apply(this, arguments);
+  };
+}(); //HTTP
 //get data from calorieninja api for recipe
 
 
@@ -3408,42 +3400,42 @@ function getRecipeNutrition(recipeData) {
   });
 }
 
-function getIngredientNutrition(_x4) {
+function getIngredientNutrition(_x5) {
   return _getIngredientNutrition.apply(this, arguments);
 }
 
 function _getIngredientNutrition() {
-  _getIngredientNutrition = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(recipeData) {
+  _getIngredientNutrition = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6(recipeData) {
     var response;
-    return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+    return _regeneratorRuntime().wrap(function _callee6$(_context6) {
       while (1) {
-        switch (_context5.prev = _context5.next) {
+        switch (_context6.prev = _context6.next) {
           case 0:
-            _context5.prev = 0;
-            _context5.next = 3;
+            _context6.prev = 0;
+            _context6.next = 3;
             return _axios.default.post("".concat(REST_URL, "/ingredient"), recipeData);
 
           case 3:
-            response = _context5.sent;
-            return _context5.abrupt("return", response.data);
+            response = _context6.sent;
+            return _context6.abrupt("return", response.data);
 
           case 7:
-            _context5.prev = 7;
-            _context5.t0 = _context5["catch"](0);
-            console.error(_context5.t0);
+            _context6.prev = 7;
+            _context6.t0 = _context6["catch"](0);
+            console.error(_context6.t0);
 
           case 10:
           case "end":
-            return _context5.stop();
+            return _context6.stop();
         }
       }
-    }, _callee5, null, [[0, 7]]);
+    }, _callee6, null, [[0, 7]]);
   }));
   return _getIngredientNutrition.apply(this, arguments);
 }
 
-function sendRecipe(_x5) {
-  return _sendRecipe.apply(this, arguments);
+function storeRecipe(_x6) {
+  return _storeRecipe.apply(this, arguments);
 } // async function getIngredientNutrition(recipeData) {
 //   return await axios
 //     .post("http://nutriclient:3001/ingredient", recipeData)
@@ -3466,37 +3458,65 @@ function sendRecipe(_x5) {
 //     console.error(errors);
 //   }
 // };
+// const incrementNutrition = (nutrition) => {
+//   recipeNutrition.calories += Math.round(nutrition.calories);
+//   recipeNutrition.carbohydrates_total_g += Math.round(
+//     nutrition.carbohydrates_total_g
+//   );
+//   recipeNutrition.cholesterol_mg += Math.round(nutrition.cholesterol_mg);
+//   recipeNutrition.fat_saturated_g += Math.round(nutrition.fat_saturated_g);
+//   recipeNutrition.fat_total_g += Math.round(nutrition.fat_total_g);
+//   recipeNutrition.fiber_g += Math.round(nutrition.fiber_g);
+//   recipeNutrition.potassium_mg += Math.round(nutrition.potassium_mg);
+//   recipeNutrition.protein_g += Math.round(nutrition.protein_g);
+//   recipeNutrition.serving_size_g += Math.round(nutrition.serving_size_g);
+//   recipeNutrition.sodium_mg += Math.round(nutrition.sodium_mg);
+// };
+// const decrementNutrition = (nutrition) => {
+//   recipeNutrition.calories -= Math.round(nutrition.calories);
+//   recipeNutrition.carbohydrates_total_g -= Math.round(
+//     nutrition.carbohydrates_total_g
+//   );
+//   recipeNutrition.cholesterol_mg -= Math.round(nutrition.cholesterol_mg);
+//   recipeNutrition.fat_saturated_g -= Math.round(nutrition.fat_saturated_g);
+//   recipeNutrition.fat_total_g -= Math.round(nutrition.fat_total_g);
+//   recipeNutrition.fiber_g -= Math.round(nutrition.fiber_g);
+//   recipeNutrition.potassium_mg -= Math.round(nutrition.potassium_mg);
+//   recipeNutrition.protein_g -= Math.round(nutrition.protein_g);
+//   recipeNutrition.serving_size_g -= Math.round(nutrition.serving_size_g);
+//   recipeNutrition.sodium_mg -= Math.round(nutrition.sodium_mg);
+// };
 
 
-function _sendRecipe() {
-  _sendRecipe = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6(recipeData) {
+function _storeRecipe() {
+  _storeRecipe = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7(recipeData) {
     var response;
-    return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+    return _regeneratorRuntime().wrap(function _callee7$(_context7) {
       while (1) {
-        switch (_context6.prev = _context6.next) {
+        switch (_context7.prev = _context7.next) {
           case 0:
-            _context6.prev = 0;
-            _context6.next = 3;
-            return _axios.default.post("".concat(REST_URL, "/users/1"), recipeData);
+            _context7.prev = 0;
+            _context7.next = 3;
+            return _axios.default.post("".concat(REST_URL, "/recipe"), recipeData);
 
           case 3:
-            response = _context6.sent;
+            response = _context7.sent;
             console.log("response: ", response);
-            return _context6.abrupt("return", response.data);
+            return _context7.abrupt("return", response.data);
 
           case 8:
-            _context6.prev = 8;
-            _context6.t0 = _context6["catch"](0);
-            console.error(_context6.t0);
+            _context7.prev = 8;
+            _context7.t0 = _context7["catch"](0);
+            console.error(_context7.t0);
 
           case 11:
           case "end":
-            return _context6.stop();
+            return _context7.stop();
         }
       }
-    }, _callee6, null, [[0, 8]]);
+    }, _callee7, null, [[0, 8]]);
   }));
-  return _sendRecipe.apply(this, arguments);
+  return _storeRecipe.apply(this, arguments);
 }
 },{"regenerator-runtime/runtime":"node_modules/regenerator-runtime/runtime.js","axios":"node_modules/axios/index.js","dotenv":"node_modules/dotenv/lib/main.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
@@ -3526,7 +3546,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55795" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55330" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

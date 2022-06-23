@@ -3177,7 +3177,7 @@ function _getRecipes() {
           case 0:
             _context.prev = 0;
             _context.next = 3;
-            return _axios.default.get("".concat(REST_URL, "/users/1"));
+            return _axios.default.get("".concat(REST_URL, "/recipe"));
 
           case 3:
             response = _context.sent;
@@ -3204,7 +3204,7 @@ function loadRecipes() {
 
 function _loadRecipes() {
   _loadRecipes = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
-    var recipeData, recipeElement;
+    var recipeData, i, recipeElement, content, j;
     return _regeneratorRuntime().wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
@@ -3214,13 +3214,23 @@ function _loadRecipes() {
 
           case 2:
             recipeData = _context2.sent;
-            console.log("Data: ", recipeData);
-            recipeElement = document.createElement("li"); //   ingredientElement.id = item.name;
+            console.log("Data: ", recipeData); //   ingredientElement.id = item.name;
 
-            recipeElement.appendChild(document.createTextNode(recipeData[0].title));
-            recipeList.appendChild(recipeElement);
+            for (i = 0; i < recipeData.length; i++) {
+              recipeElement = document.createElement("div");
+              recipeElement.classList.add("recipe");
+              content = recipeData[i].name + "<br> Ingredients: <br>";
 
-          case 7:
+              for (j = 0; j < recipeData[i].ingredients.length; j++) {
+                content += recipeData[i].ingredients[j].qty + " " + recipeData[i].ingredients[j].unit + " " + recipeData[i].ingredients[j].name + " ";
+              }
+
+              content += "<br> Nutrition: <br> " + "Calories: " + recipeData[i].nutrition.calories + " Carbs(g): " + recipeData[i].nutrition.carbohydrates_total_g + " Protein(g): " + recipeData[i].nutrition.protein_g + " Total Fat(g): " + recipeData[i].nutrition.fat_total_g + " Saturated Fat(g): " + recipeData[i].nutrition.fat_saturated_g + " Fiber(g): " + recipeData[i].nutrition.fiber_g + " Cholesterol(mg): " + recipeData[i].nutrition.cholesterol_mg;
+              recipeElement.innerHTML = content;
+              recipeList.appendChild(recipeElement);
+            }
+
+          case 5:
           case "end":
             return _context2.stop();
         }
@@ -3259,7 +3269,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55795" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55330" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

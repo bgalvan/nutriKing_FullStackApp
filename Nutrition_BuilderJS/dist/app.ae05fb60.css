@@ -9,10 +9,20 @@ h2 {
   font-family: "Open Sans", sans-serif;
 }
 
-.div-1 {
-  background-color: bisque;
-  height: 40px;
-  width: 40px;
+.recipe {
+  background-color: rgb(255, 255, 255);
+  height: auto;
+  width: 85%;
+  /* margin: 1%; */
+  border-style: double;
+  border-color: rgb(101, 107, 180);
+  font-family: "Open Sans", sans-serif;
+}
+
+#recipeList {
+  display: grid;
+  grid-auto-flow: row;
+  grid-row-gap: 10px;
 }
 
 ul {
@@ -24,6 +34,7 @@ ul {
 
 ul li {
   display: block;
+  font-family: "Open Sans", sans-serif;
 }
 
 img {
