@@ -3204,7 +3204,7 @@ function loadRecipes() {
 
 function _loadRecipes() {
   _loadRecipes = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
-    var recipeData, i, recipeElement, content, j;
+    var recipeData, i, recipeElement, recipeName, title, ingredientElement, subtitle, content, j, ingredient, br, nutritionElement, data;
     return _regeneratorRuntime().wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
@@ -3218,15 +3218,34 @@ function _loadRecipes() {
 
             for (i = 0; i < recipeData.length; i++) {
               recipeElement = document.createElement("div");
-              recipeElement.classList.add("recipe");
+              recipeElement.classList.add("recipeCard");
+              recipeName = document.createElement("h2");
+              recipeName.classList.add("recipeName");
+              title = document.createTextNode(recipeData[i].name);
+              recipeName.appendChild(title); // recipeName.classList.add("recipeTitle");
+
+              ingredientElement = document.createElement("p");
+              ingredientElement.classList.add("ingredients");
+              subtitle = document.createTextNode("Ingredients: ");
+              ingredientElement.appendChild(subtitle);
               content = recipeData[i].name + "<br> Ingredients: <br>";
 
               for (j = 0; j < recipeData[i].ingredients.length; j++) {
+                ingredient = document.createTextNode(recipeData[i].ingredients[j].qty + " " + recipeData[i].ingredients[j].unit + " " + recipeData[i].ingredients[j].name + " ");
+                br = document.createElement("br");
+                ingredientElement.appendChild(br);
+                ingredientElement.appendChild(ingredient);
                 content += recipeData[i].ingredients[j].qty + " " + recipeData[i].ingredients[j].unit + " " + recipeData[i].ingredients[j].name + " ";
               }
 
-              content += "<br> Nutrition: <br> " + "Calories: " + recipeData[i].nutrition.calories + " Carbs(g): " + recipeData[i].nutrition.carbohydrates_total_g + " Protein(g): " + recipeData[i].nutrition.protein_g + " Total Fat(g): " + recipeData[i].nutrition.fat_total_g + " Saturated Fat(g): " + recipeData[i].nutrition.fat_saturated_g + " Fiber(g): " + recipeData[i].nutrition.fiber_g + " Cholesterol(mg): " + recipeData[i].nutrition.cholesterol_mg;
-              recipeElement.innerHTML = content;
+              nutritionElement = document.createElement("p");
+              nutritionElement.classList.add("nutrition");
+              subtitle = document.createTextNode("Nutrition: ");
+              data = document.createTextNode("Calories: " + recipeData[i].nutrition.calories + " Carbs(g): " + recipeData[i].nutrition.carbohydrates_total_g + " Protein(g): " + recipeData[i].nutrition.protein_g + " Total Fat(g): " + recipeData[i].nutrition.fat_total_g + " Saturated Fat(g): " + recipeData[i].nutrition.fat_saturated_g + " Fiber(g): " + recipeData[i].nutrition.fiber_g + " Cholesterol(mg): " + recipeData[i].nutrition.cholesterol_mg);
+              nutritionElement.append(subtitle, data);
+              content += "<br> Nutrition: <br> " + "Calories: " + recipeData[i].nutrition.calories + " Carbs(g): " + recipeData[i].nutrition.carbohydrates_total_g + " Protein(g): " + recipeData[i].nutrition.protein_g + " Total Fat(g): " + recipeData[i].nutrition.fat_total_g + " Saturated Fat(g): " + recipeData[i].nutrition.fat_saturated_g + " Fiber(g): " + recipeData[i].nutrition.fiber_g + " Cholesterol(mg): " + recipeData[i].nutrition.cholesterol_mg; // recipeElement.innerHTML = content;
+
+              recipeElement.append(recipeName, ingredientElement, nutritionElement);
               recipeList.appendChild(recipeElement);
             }
 
@@ -3269,7 +3288,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55330" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51899" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -168,6 +168,30 @@ function removeIngredient(ingredient) {
   console.log("array: ", ingredientArray);
 }
 
+//hanlde image uploads
+let form = document.querySelector("#upload");
+let file = document.querySelector("#file");
+let app = document.querySelector("#app");
+
+function logFile(event) {
+  let str = event.target.result;
+  let img = document.createElement("img");
+  img.src = str;
+  app.append(img);
+  console.log(str);
+}
+
+function handleImageSubmit(event) {
+  event.preventDefault();
+  if (!file.value.length) return;
+  let reader = new FileReader();
+  reader.onload = logFile;
+  reader.readAsDataURL(file.files[0]);
+}
+
+form.addEventListener("submit", handleImageSubmit);
+
+//handle recipe submit
 const submitRecipe = async (recipe) => {
   var res = await storeRecipe(recipe);
   for (var i = 0; i < ingredientArray.length; i++) {

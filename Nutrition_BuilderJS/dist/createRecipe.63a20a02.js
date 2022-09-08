@@ -3353,7 +3353,30 @@ function removeIngredient(ingredient) {
   updateNutrition();
   displayNutrition();
   console.log("array: ", ingredientArray);
+} //hanlde image uploads
+
+
+var form = document.querySelector("#upload");
+var file = document.querySelector("#file");
+var app = document.querySelector("#app");
+
+function logFile(event) {
+  var str = event.target.result;
+  var img = document.createElement("img");
+  img.src = str;
+  app.append(img);
+  console.log(str);
 }
+
+function handleImageSubmit(event) {
+  event.preventDefault();
+  if (!file.value.length) return;
+  var reader = new FileReader();
+  reader.onload = logFile;
+  reader.readAsDataURL(file.files[0]);
+}
+
+form.addEventListener("submit", handleImageSubmit); //handle recipe submit
 
 var submitRecipe = /*#__PURE__*/function () {
   var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(recipe) {
@@ -3546,7 +3569,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55330" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51899" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

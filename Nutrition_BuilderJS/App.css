@@ -1,6 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans&display=swap");
 p {
   font-family: "Open Sans", sans-serif;
+  color: rgb(78, 78, 78);
 }
 h1 {
   font-family: "Open Sans", sans-serif;
@@ -9,25 +10,46 @@ h2 {
   font-family: "Open Sans", sans-serif;
 }
 
-.recipe {
+.recipeTitle {
+  color: rgb(101, 115, 180);
+}
+
+.recipeCard {
   background-color: rgb(255, 255, 255);
   height: auto;
-  width: 85%;
+  width: 50%;
   /* margin: 1%; */
-  border-style: double;
-  border-color: rgb(101, 107, 180);
+  border-style: solid;
+  border-color: rgb(135, 143, 231);
+  border-radius: 10px;
   font-family: "Open Sans", sans-serif;
+}
+
+.recipeName {
+  padding-left: 10px;
+}
+
+.nutrition {
+  padding-left: 10px;
+  font-size: smaller;
+}
+
+.ingredients {
+  display: grid;
+  grid-auto-flow: row;
+  grid-row-gap: 5px;
+  padding-left: 10px;
 }
 
 #recipeList {
   display: grid;
   grid-auto-flow: row;
-  grid-row-gap: 10px;
+  grid-row-gap: 5px;
 }
 
 ul {
   background-color: blanchedalmond;
-  border-radius: 10px;
+  border-radius: 5px;
   border-color: black;
   border-width: 2px;
 }
@@ -74,4 +96,13 @@ button {
 
 input {
   font-family: "Open Sans", sans-serif;
+}
+
+form {
+  /* text-align: center; */
+  /* padding: 50px; */
+}
+
+.div-1 {
+  /* align-items: center; */
 }
